@@ -1,5 +1,5 @@
 # Sistema de Planilla 💵
-Este es un proyecto con fines educativos para la catedra de Programación 1 desarollado completamente por estudiantes de la carrera de Ingenieria de Sistemas Informaticos, con el objetivo de poner en práctica lo aprendido en el ciclo académico.
+Este es un proyecto con fines educativos para la catedra de Programación 1 desarollado completamente por estudiantes de la carrera de Ingeniería de Sistemas Informáticos, con el objetivo de poner en práctica lo aprendido en el ciclo académico.
 
 ## El sistema cuenta con los siguientes modulos
 * Registro de empleados
