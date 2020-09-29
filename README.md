@@ -9,7 +9,7 @@ Este es un proyecto con fines educativos para la catedra de Programación 1 desa
 
 ## Desarrolladores
 * Josue Adonay Aguilar Rivas ([xdesprox](http://github.com/xdesprox "xdesprox"))
-* Kenneth Valerio Ramirez Constanza
-* Walter Alejandro Morales Quintanilla
+* Kenneth Valerio Ramirez Constanza ([KennethNeth23](https://github.com/KennethNeth23 "KennethNeth23"))
+* Walter Alejandro Morales Quintanilla ([WalterCrace](https://github.com/WalterCrace "WalterCrace"))
 * Julio Antonio Torres Rodriguez ([Julio-Sama](http://github.com/Julio-Sama "Julio-Sama"))
 * Mario Ernesto Zelaya Lainez ([zelaya201](https://github.com/zelaya201 "zelaya201"))
