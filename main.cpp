@@ -30,10 +30,8 @@ void registroEmpleados_registrar(int [row], char [row][cols], char [row][cols], 
 void registroEmpleados_edit(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroEmpleados_delete(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroDescuentos(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int);
-void buscarDUI(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int);
-void buscarNom(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int);
-void buscarApe(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int);
-void buscarCargo(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int);
+void buscarEmpleados(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int, int&);
+bool verificarEmpleado(char, char [row][cols], char [row][cols], char [row][25], int);
 
 int main(){
 
@@ -59,7 +57,7 @@ int main(){
         {"Luis Fernando"}
     };
     char ape[row][cols] = {
-        {"Aguilar Rivas"},
+        {"Aguilar Constanza"},
         {"Morales Quintanilla"},
         {"Torres Rodriguez"},
         {"Ramirez Constanza"},
@@ -81,7 +79,7 @@ int main(){
     }; 
     
     float salario[row] = {2100,900,1400,1000,1830,800,1200,2001};
-   
+    int seleccion;
     system("title Sistema de Planillas");
 
     do{
@@ -93,7 +91,7 @@ int main(){
             case 2: system("cls");cout<<"Modulo en proceso";break;
             case 3: system("cls");cout<<"Modulo en proceso";break;
             case 4: system("cls");cout<<"Modulo en proceso";break;
-            case 5: system("cls");registroDescuentos(dui, nom, ape, cargo, salario, indice);break;
+            case 5: system("cls");buscarEmpleados(dui, nom, ape, cargo, salario, indice, seleccion);break;
             case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Modulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
         }
@@ -710,11 +708,16 @@ void registroEmpleados_delete(int dui[row], char nom[row][cols], char ape[row][c
 }
 
 void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int indice) {
+    int seleccion;
+}
+
+void buscarEmpleados(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int indice, int& seleccion) {
     int duiDrop, a = 0;
     char recep[50], auxNom[50], auxApe[50], auxCargo[50];
     char nomHeader[cols];
     char apeHeader[cols];
     bool exist;
+    int pointer[indice], c = 0;
 
     do {
         system("cls");
@@ -780,143 +783,165 @@ void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], 
                         }
                         
                     }
-
+                    
                     if (!exist) {
                         gotoxy(28,y+5);
                         cout<<ANSI_COLOR_RED<<"Error: Empleado no encontrado";
                         cuadro(26,y+4,88,y+6);cout<<ANSI_COLOR_RESET;
                         getch();
                     }else {
-                        system("cls");
-                        header();
-                        gotoxy(10,9);
-                        printf("%c Registro de empleados / Buscar empleado",254);
+                        do {
+                
+                            system("cls");
+                            header();
+                            gotoxy(10,9);
+                            printf("%c Registro de empleados / Buscar empleado",254);
 
-                        gotoxy(11,12);
-                        printf("N%c", 167);
-                        cuadro(8,11,15,13);
+                            gotoxy(11,12);
+                            printf("N%c", 167);
+                            cuadro(8,11,15,13);
 
-                        gotoxy(19,12);
-                        cout<<"DUI";
-                        cuadro(15,11,26,13);
+                            gotoxy(19,12);
+                            cout<<"DUI";
+                            cuadro(15,11,26,13);
 
-                        gotoxy(36,12);
-                        cout<<"Nombre";
-                        cuadro(26,11,52,13);
+                            gotoxy(36,12);
+                            cout<<"Nombre";
+                            cuadro(26,11,52,13);
 
-                        gotoxy(60,12);
-                        cout<<"Apellidos";
-                        cuadro(52,11,77,13);
+                            gotoxy(60,12);
+                            cout<<"Apellidos";
+                            cuadro(52,11,77,13);
 
-                        gotoxy(84,12);
-                        cout<<"Cargo";
-                        cuadro(77,11,97,13);
+                            gotoxy(84,12);
+                            cout<<"Cargo";
+                            cuadro(77,11,97,13);
 
-                        gotoxy(101,12);
-                        cout<<"Salario";
-                        cuadro(97,11,110,13);
+                            gotoxy(101,12);
+                            cout<<"Salario";
+                            cuadro(97,11,110,13);
 
-                        a = 0;
-                        for (int i = 0; i < indice; i++) {
-                            strcpy(auxNom, nom[i]);
-                            char *tokenNom = strtok(auxNom, " ");
-                            if(tokenNom != NULL){
-                                while(tokenNom != NULL){
-                                    if (strcmp(recep, tokenNom) == 0) {
-                                        y++;
+                            a = 0;
+                            c = 0;
+                            for (int i = 0; i < indice; i++) {
+                                strcpy(auxNom, nom[i]);
+                                char *tokenNom = strtok(auxNom, " ");
+                                if(tokenNom != NULL){
+                                    while(tokenNom != NULL){
+                                        if (strcmp(recep, tokenNom) == 0) {
+                                            y++;
 
-                                        gotoxy(11,y);
-                                        cout<<(i+1)-(a--);
+                                            gotoxy(11,y);
+                                            pointer[c] = a+c;
+                                            c++;
+                                            cout<<(i+1)-(a--);
+                                            
+                                            gotoxy(16,y);
+                                            cout<<dui[i];
 
-                                        gotoxy(16,y);
-                                        cout<<dui[i];
+                                            gotoxy(33,y);
+                                            cout<<nom[i];
 
-                                        gotoxy(33,y);
-                                        cout<<nom[i];
+                                            gotoxy(58,y);
+                                            cout<<ape[i];
 
-                                        gotoxy(58,y);
-                                        cout<<ape[i];
-
-                                        gotoxy(80,y);
-                                        cout<<cargo[i];
-                                    
-                                        gotoxy(101,y);
-                                        cout<<"$"<<salario[i];
+                                            gotoxy(80,y);
+                                            cout<<cargo[i];
+                                        
+                                            gotoxy(101,y);
+                                            cout<<"$"<<salario[i];
+                                        }
+                                        tokenNom = strtok(NULL, " ");
                                     }
-                                    tokenNom = strtok(NULL, " ");
                                 }
+                                ++a;
                             }
-                            ++a;
-                        }
 
-                        a = 0;
+                            a = 0;
+                            c = 0;
+                            for (int i = 0; i < indice; i++) {
+                                strcpy(auxApe, ape[i]);
+                                char *tokenApe = strtok(auxApe, " ");
+                                if(tokenApe != NULL){
+                                    while(tokenApe != NULL){
+                                        if (strcmp(recep, tokenApe) == 0) {
+                                            y++;
 
-                        for (int i = 0; i < indice; i++) {
-                            strcpy(auxApe, ape[i]);
-                            char *tokenApe = strtok(auxApe, " ");
-                            if(tokenApe != NULL){
-                                while(tokenApe != NULL){
-                                    if (strcmp(recep, tokenApe) == 0) {
-                                        y++;
+                                            gotoxy(11,y);
+                                            pointer[c] = a+c;
+                                            c++;
+                                            cout<<(i+1)-(a--);
+                                            
+                                            gotoxy(16,y);
+                                            cout<<dui[i];
 
-                                        gotoxy(11,y);
-                                        cout<<(i+1)-(a--);
+                                            gotoxy(33,y);
+                                            cout<<nom[i];
 
-                                        gotoxy(16,y);
-                                        cout<<dui[i];
+                                            gotoxy(58,y);
+                                            cout<<ape[i];
 
-                                        gotoxy(33,y);
-                                        cout<<nom[i];
-
-                                        gotoxy(58,y);
-                                        cout<<ape[i];
-
-                                        gotoxy(80,y);
-                                        cout<<cargo[i];
-                                    
-                                        gotoxy(101,y);
-                                        cout<<"$"<<salario[i];
+                                            gotoxy(80,y);
+                                            cout<<cargo[i];
+                                        
+                                            gotoxy(101,y);
+                                            cout<<"$"<<salario[i];
+                                        }
+                                        tokenApe = strtok(NULL, " ");
                                     }
-                                    tokenApe = strtok(NULL, " ");
                                 }
+                                ++a;
                             }
-                            ++a;
-                        }
 
-                        a = 0;
+                            a = 0;
+                            c = 0;
+                            for (int i = 0; i < indice; i++) {
+                                strcpy(auxCargo, cargo[i]);
+                                char *tokenCargo = strtok(auxCargo, " ");
+                                if(tokenCargo != NULL){
+                                    while(tokenCargo != NULL){
+                                        if (strcmp(recep, tokenCargo) == 0) {
+                                            y++;
 
-                        for (int i = 0; i < indice; i++) {
-                            strcpy(auxCargo, cargo[i]);
-                            char *tokenCargo = strtok(auxCargo, " ");
-                            if(tokenCargo != NULL){
-                                while(tokenCargo != NULL){
-                                    if (strcmp(recep, tokenCargo) == 0) {
-                                        y++;
+                                            gotoxy(11,y);
+                                            pointer[c] = a+c;
+                                            c++;
+                                            cout<<(i+1)-(a--);
+                                            
+                                            gotoxy(16,y);
+                                            cout<<dui[i];
 
-                                        gotoxy(11,y);
-                                        cout<<(i+1)-(a--);
+                                            gotoxy(33,y);
+                                            cout<<nom[i];
 
-                                        gotoxy(16,y);
-                                        cout<<dui[i];
+                                            gotoxy(58,y);
+                                            cout<<ape[i];
 
-                                        gotoxy(33,y);
-                                        cout<<nom[i];
-
-                                        gotoxy(58,y);
-                                        cout<<ape[i];
-
-                                        gotoxy(80,y);
-                                        cout<<cargo[i];
-                                    
-                                        gotoxy(101,y);
-                                        cout<<"$"<<salario[i];
+                                            gotoxy(80,y);
+                                            cout<<cargo[i];
+                                        
+                                            gotoxy(101,y);
+                                            cout<<"$"<<salario[i];
+                                        }
+                                        tokenCargo = strtok(NULL, " ");
                                     }
-                                    tokenCargo = strtok(NULL, " ");
                                 }
+                                ++a;
                             }
-                            ++a;
-                        }
-                        getch();
+                            //cout<<endl<<endl<<pointer<<endl;
+                            char recepSeleccion[2];
+                            gotoxy(10, y+2);
+                            cout<<"Seleccione empleado o presione [0] para volver: ";
+                            gets(recepSeleccion);
+                            seleccion = validar_numero(recepSeleccion);
+                            if (seleccion != 0) {
+                                if (seleccion != -1) {
+                                    seleccion = pointer[seleccion-1];
+                                    getch();
+                                }
+                            } 
+                        }while (seleccion != 0);
+                        //getch();
                     }
                 }
             }
@@ -977,7 +1002,7 @@ void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], 
 
                 gotoxy(101,y);
                 cout<<"$"<<salario[id];
-        
+                seleccion = duiDrop;
                 getch();
             }
         }
@@ -985,6 +1010,46 @@ void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], 
     }while (duiDrop != 1);
 }
 
+/* bool verificarEmpleado(char recep[50], char empleado[row], int indice) {
+    bool exist = false;
+    char auxNom[50], auxApe[50], auxCargo[50];
+
+    for (int i = 0; i < indice; i++) {
+        strcpy(auxNom, nom[i]);
+        char *tokenNom = strtok(auxNom, " ");
+        if(tokenNom != NULL){
+            while(tokenNom != NULL){
+                if (strcmp(recep, tokenNom) == 0) {
+                    exist = true;
+                }
+                tokenNom = strtok(NULL, " "); 
+            }
+        }
+
+        strcpy(auxApe, ape[i]);
+        char *tokenApe = strtok(auxApe, " ");
+        if(tokenApe != NULL){
+            while(tokenApe != NULL){
+                if (strcmp(recep, tokenApe) == 0) {
+                    exist = true;
+                }
+                tokenApe = strtok(NULL, " "); 
+            }
+        }
+
+        strcpy(auxCargo, cargo[i]);
+        char *tokenCargo = strtok(auxCargo, " ");
+        if(tokenCargo != NULL){
+            while(tokenCargo != NULL){
+                if (strcmp(recep, tokenCargo) == 0) {
+                    exist = true;
+                }
+                tokenCargo = strtok(NULL, " "); 
+            }
+        }
+        
+    }
+} */
 //alinear objetos-
 void gotoxy(int x, int y){
 	COORD coord;
