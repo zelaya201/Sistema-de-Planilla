@@ -710,199 +710,240 @@ void registroEmpleados_delete(int dui[row], char nom[row][cols], char ape[row][c
 }
 
 void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int indice) {
-    int opV;
-    char op[2];
-
-    /* header();
-    cuadro(6,20,112,27);
-    gotoxy(8,21);
-    cout<<"Mensaje(s): ";  */
+    int duiDrop, a = 0;
+    char recep[50], auxNom[50], auxApe[50], auxCargo[50];
+    char nomHeader[cols];
+    char apeHeader[cols];
+    bool exist;
 
     do {
         system("cls");
-
+        int id = -2;
+        int y = 13;
         header();
         gotoxy(10,9);
         printf("%c Registro de descuentos",254);
         gotoxy(10, 11);
         cout<<"Buscar empleado"<<endl;
-        gotoxy(10, 12);
-        cout<<"[1] DUI"<<endl;
         gotoxy(10, 13);
-        cout<<"[2] Nombre"<<endl;
-        gotoxy(10, 14);
-        cout<<"[3] Apellido"<<endl;
-        gotoxy(10, 15);
-        cout<<"[4] Cargo"<<endl;
-        gotoxy(10, 16);
-        cout<<"[5] Atras"<<endl;
-        gotoxy(10, 18);
-        cout<<"Seleccione: ";
-        gets(op); 
+        cout<<"Escriba DUI, nombre, apellido o cargo del empleado a buscar o [1] para cancelar: ";
+        gets(recep);
+        recep[0] = toupper(recep[0]);
 
-        opV = validar_numero(op);
+        duiDrop = validar_numero(recep);
 
-        switch(opV) {
-            case 1:
-                buscarDUI(dui, nom, ape, cargo, salario, indice);
-                break;
-            case 2:
-                buscarNom(dui, nom, ape, cargo, salario, indice);
-                break;
-            case 3:
-                buscarApe(dui, nom, ape, cargo, salario, indice);
-                break;
-            case 4:
-                buscarCargo(dui, nom, ape, cargo, salario, indice);
-                break;
-             case 5:
-                break; 
-            default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: opcion incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;;getch();
-        }
-
-    }while (opV != 5);
-}
-
-void buscarDUI(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int indice) {
-    int duiDrop, opV;
-    char DV[8], op;
-    char nomHeader[cols];
-    char apeHeader[cols];
-
-    do {
-        system("cls");
-        int y = 13;
-        int id = -2;
-        header();
-        gotoxy(10,9);
-        printf("%c Registro de descuentos / Buscar empleado",254);
-        gotoxy(10, 11);
-        cout<<"Escriba DUI de empleado a buscar o [1] para cancelar: ";
-        gets(DV);
-
-        duiDrop = validar_numero(DV);
-
-        for (int i = 0; i < indice; i++) {
-            if (duiDrop == dui[i]) {
-                id = i;
-            }
-        }
-        
-        if(id == -2){
-            if(duiDrop != 1){
+        if (duiDrop == -1) {
+            if(validar_cadena(recep) > 0 || (recep[0] == '\0') || (recep[0] == ' ')){
                 gotoxy(28,y+5);
-                cout<<ANSI_COLOR_RED<<"Error: No se encontro ningun empleado con ese numero de DUI";
+                cout<<ANSI_COLOR_RED<<"Error: Dato invalido";
                 cuadro(26,y+4,88,y+6);cout<<ANSI_COLOR_RESET;
                 getch();
+            }else {
+                if(indice <= 0){
+                    gotoxy(32,y+2);
+                    cout<<"No hay empleados registrados, por favor ingrese datos"<<endl;
+                    getch();
+                }else {
+                    exist = false;
+                    for (int i = 0; i < indice; i++) {
+                        strcpy(auxNom, nom[i]);
+                        char *tokenNom = strtok(auxNom, " ");
+                        if(tokenNom != NULL){
+                            while(tokenNom != NULL){
+                                if (strcmp(recep, tokenNom) == 0) {
+                                    exist = true;
+                                }
+                                tokenNom = strtok(NULL, " "); 
+                            }
+                        }
+
+                        strcpy(auxApe, ape[i]);
+                        char *tokenApe = strtok(auxApe, " ");
+                        if(tokenApe != NULL){
+                            while(tokenApe != NULL){
+                                if (strcmp(recep, tokenApe) == 0) {
+                                    exist = true;
+                                }
+                                tokenApe = strtok(NULL, " "); 
+                            }
+                        }
+
+                        strcpy(auxCargo, cargo[i]);
+                        char *tokenCargo = strtok(auxCargo, " ");
+                        if(tokenCargo != NULL){
+                            while(tokenCargo != NULL){
+                                if (strcmp(recep, tokenCargo) == 0) {
+                                    exist = true;
+                                }
+                                tokenCargo = strtok(NULL, " "); 
+                            }
+                        }
+                        
+                    }
+
+                    if (!exist) {
+                        gotoxy(28,y+5);
+                        cout<<ANSI_COLOR_RED<<"Error: Empleado no encontrado";
+                        cuadro(26,y+4,88,y+6);cout<<ANSI_COLOR_RESET;
+                        getch();
+                    }else {
+                        system("cls");
+                        header();
+                        gotoxy(10,9);
+                        printf("%c Registro de empleados / Buscar empleado",254);
+
+                        gotoxy(11,12);
+                        printf("N%c", 167);
+                        cuadro(8,11,15,13);
+
+                        gotoxy(19,12);
+                        cout<<"DUI";
+                        cuadro(15,11,26,13);
+
+                        gotoxy(36,12);
+                        cout<<"Nombre";
+                        cuadro(26,11,52,13);
+
+                        gotoxy(60,12);
+                        cout<<"Apellidos";
+                        cuadro(52,11,77,13);
+
+                        gotoxy(84,12);
+                        cout<<"Cargo";
+                        cuadro(77,11,97,13);
+
+                        gotoxy(101,12);
+                        cout<<"Salario";
+                        cuadro(97,11,110,13);
+
+                        a = 0;
+                        for (int i = 0; i < indice; i++) {
+                            strcpy(auxNom, nom[i]);
+                            char *tokenNom = strtok(auxNom, " ");
+                            if(tokenNom != NULL){
+                                while(tokenNom != NULL){
+                                    if (strcmp(recep, tokenNom) == 0) {
+                                        y++;
+
+                                        gotoxy(11,y);
+                                        cout<<(i+1)-(a--);
+
+                                        gotoxy(16,y);
+                                        cout<<dui[i];
+
+                                        gotoxy(33,y);
+                                        cout<<nom[i];
+
+                                        gotoxy(58,y);
+                                        cout<<ape[i];
+
+                                        gotoxy(80,y);
+                                        cout<<cargo[i];
+                                    
+                                        gotoxy(101,y);
+                                        cout<<"$"<<salario[i];
+                                    }
+                                    tokenNom = strtok(NULL, " ");
+                                }
+                            }
+                            ++a;
+                        }
+
+                        a = 0;
+
+                        for (int i = 0; i < indice; i++) {
+                            strcpy(auxApe, ape[i]);
+                            char *tokenApe = strtok(auxApe, " ");
+                            if(tokenApe != NULL){
+                                while(tokenApe != NULL){
+                                    if (strcmp(recep, tokenApe) == 0) {
+                                        y++;
+
+                                        gotoxy(11,y);
+                                        cout<<(i+1)-(a--);
+
+                                        gotoxy(16,y);
+                                        cout<<dui[i];
+
+                                        gotoxy(33,y);
+                                        cout<<nom[i];
+
+                                        gotoxy(58,y);
+                                        cout<<ape[i];
+
+                                        gotoxy(80,y);
+                                        cout<<cargo[i];
+                                    
+                                        gotoxy(101,y);
+                                        cout<<"$"<<salario[i];
+                                    }
+                                    tokenApe = strtok(NULL, " ");
+                                }
+                            }
+                            ++a;
+                        }
+
+                        a = 0;
+
+                        for (int i = 0; i < indice; i++) {
+                            strcpy(auxCargo, cargo[i]);
+                            char *tokenCargo = strtok(auxCargo, " ");
+                            if(tokenCargo != NULL){
+                                while(tokenCargo != NULL){
+                                    if (strcmp(recep, tokenCargo) == 0) {
+                                        y++;
+
+                                        gotoxy(11,y);
+                                        cout<<(i+1)-(a--);
+
+                                        gotoxy(16,y);
+                                        cout<<dui[i];
+
+                                        gotoxy(33,y);
+                                        cout<<nom[i];
+
+                                        gotoxy(58,y);
+                                        cout<<ape[i];
+
+                                        gotoxy(80,y);
+                                        cout<<cargo[i];
+                                    
+                                        gotoxy(101,y);
+                                        cout<<"$"<<salario[i];
+                                    }
+                                    tokenCargo = strtok(NULL, " ");
+                                }
+                            }
+                            ++a;
+                        }
+                        getch();
+                    }
+                }
             }
         }else {
-            char meses[12][12] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-            char mesEval[12];
-            int diasDescuento;
-            float salarioDia = salario[id]/22;
-            float salarioNeto;
-            system("cls");
-            header();
-            strcpy(nomHeader, nom[id]); 
-            strcpy(apeHeader, ape[id]); 
-            gotoxy(10,9);
-            printf("%c Registro de descuentos / Buscar empleado / Descuento por dia / DUI: %d - %s %s",254,dui[id],strtok(nomHeader, " "), strtok(apeHeader, " "));
-            gotoxy(16,12);
-            cout<<"DUI";
-            cuadro(8,11,26,13);
-
-            gotoxy(36,12);
-            cout<<"Nombre";
-            cuadro(26,11,52,13);
-
-            gotoxy(60,12);
-            cout<<"Apellidos";
-            cuadro(52,11,77,13);
-
-            gotoxy(84,12);
-            cout<<"Cargo";
-            cuadro(77,11,97,13);
-
-            gotoxy(101,12);
-            cout<<"Salario";
-            cuadro(97,11,110,13);
-
-            y++;
-
-            gotoxy(13,y);
-            cout<<dui[id];
-
-            gotoxy(29,y);
-            cout<<nom[id];
-
-            gotoxy(55,y);
-            cout<<ape[id];
-
-            gotoxy(80,y);
-            cout<<cargo[id];
-
-            gotoxy(101,y);
-            cout<<"$"<<salario[id];
-        
-            gotoxy(10, y+2);
-            cout<<"Mes a evaluar: ";
-            gets(mesEval);
-
-            gotoxy(10, y+3);
-            cout<<"Dias a descontar: ";
-            cin>>diasDescuento;
-
-            salarioNeto = salario[id] - (diasDescuento*salarioDia);
-
-            gotoxy(10, y+4);
-            cout<<"Salario Neto: $"<<salarioNeto;
-
-            getch();
-        }
-
-    }while (duiDrop != 1);
-}
-
-void buscarNom(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int indice) {
-    char recepNom[50], auxNom[50];
-    bool exist = false;
-    int val = 0, a = 0;
-
-    do {
-        system("cls");
-        int y = 13;
-        int id = -2;
-        header();
-        gotoxy(10,9);
-        printf("%c Registro de descuentos / Buscar empleado",254);
-        gotoxy(10, 11);
-        cout<<"Escriba un nombre del empleado a buscar o [1] para cancelar: ";
-        gets(recepNom);
-        recepNom[0] = toupper(recepNom[0]);
-
-        if(validar_cadena(recepNom) > 0 || (recepNom[0] == '\0') || (recepNom[0] == ' ')){
-            gotoxy(28,y+5);
-            cout<<ANSI_COLOR_RED<<"Error: Nombre invalido";
-            cuadro(26,y+4,88,y+6);cout<<ANSI_COLOR_RESET;
-            getch();
-        }else {
-            if(indice <= 0){
-                gotoxy(32,y+2);
-                cout<<"No hay empleados registrados, por favor ingrese datos"<<endl;
-                getch();
+            for (int i = 0; i < indice; i++) {
+                if (duiDrop == dui[i]) {
+                    id = i;
+                }
+            }
+            
+            if(id == -2){
+                if(duiDrop != 1){
+                    gotoxy(28,y+5);
+                    cout<<ANSI_COLOR_RED<<"Error: No se encontro ningun empleado con ese numero de DUI";
+                    cuadro(26,y+4,88,y+6);cout<<ANSI_COLOR_RESET;
+                    getch();
+                }
             }else {
                 system("cls");
                 header();
+                strcpy(nomHeader, nom[id]); 
+                strcpy(apeHeader, ape[id]); 
                 gotoxy(10,9);
-                printf("%c Registro de descuentos / Buscar empleado",254);
-
-                gotoxy(11,12);
-                printf("N%c", 167);
-                cuadro(8,11,15,13);
-
-                gotoxy(19,12);
+                printf("%c Registro de descuentos / Buscar empleado / Descuento por dia / DUI: %d - %s %s",254,dui[id],strtok(nomHeader, " "), strtok(apeHeader, " "));
+                gotoxy(16,12);
                 cout<<"DUI";
-                cuadro(15,11,26,13);
+                cuadro(8,11,26,13);
 
                 gotoxy(36,12);
                 cout<<"Nombre";
@@ -920,240 +961,28 @@ void buscarNom(int dui[row], char nom[row][cols], char ape[row][cols], char carg
                 cout<<"Salario";
                 cuadro(97,11,110,13);
 
+                y++;
 
-                for (int i = 0; i < indice; i++) {
-                    strcpy(auxNom, nom[i]);
-                    char *token = strtok(auxNom, " ");
-                    if(token != NULL){
-                        while(token != NULL){
-                            if (strcmp(recepNom, token) == 0) {
-                                y++;
+                gotoxy(13,y);
+                cout<<dui[id];
 
-                                gotoxy(11,y);
-                                cout<<(i+1)-(a--);
+                gotoxy(29,y);
+                cout<<nom[id];
 
-                                gotoxy(16,y);
-                                cout<<dui[i];
+                gotoxy(55,y);
+                cout<<ape[id];
 
-                                gotoxy(33,y);
-                                cout<<nom[i];
+                gotoxy(80,y);
+                cout<<cargo[id];
 
-                                gotoxy(58,y);
-                                cout<<ape[i];
-
-                                gotoxy(80,y);
-                                cout<<cargo[i];
-                            
-                                gotoxy(101,y);
-                                cout<<"$"<<salario[i];
-                            }
-                            token = strtok(NULL, " ");
-                        }
-                    }
-                    //strtok(primerNom, " ");
-                    a++;
-                }
-                
+                gotoxy(101,y);
+                cout<<"$"<<salario[id];
+        
                 getch();
             }
-            
         }
-
-    }while(recepNom[0] != 'N');
-}
-
-void buscarApe(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int indice) {
-    char recepApe[50], auxApe[50];
-    bool exist = false;
-    int val = 0, a = 0;
-
-    do {
-        system("cls");
-        int y = 13;
-        int id = -2;
-        header();
-        gotoxy(10,9);
-        printf("%c Registro de descuentos / Buscar empleado",254);
-        gotoxy(10, 11);
-        cout<<"Escriba un apellido del empleado a buscar o [1] para cancelar: ";
-        gets(recepApe);
-        recepApe[0] = toupper(recepApe[0]);
-
-        if(validar_cadena(recepApe) > 0 || (recepApe[0] == '\0') || (recepApe[0] == ' ')){
-            gotoxy(28,y+5);
-            cout<<ANSI_COLOR_RED<<"Error: Apellido invalido";
-            cuadro(26,y+4,88,y+6);cout<<ANSI_COLOR_RESET;
-            getch();
-        }else {
-            if(indice <= 0){
-                gotoxy(32,y+2);
-                cout<<"No hay empleados registrados, por favor ingrese datos"<<endl;
-                getch();
-            }else {
-                gotoxy(10,9);
-                printf("%c Registro de empleados / Buscar empleado",254);
-
-                gotoxy(11,12);
-                printf("N%c", 167);
-                cuadro(8,11,15,13);
-
-                gotoxy(19,12);
-                cout<<"DUI";
-                cuadro(15,11,26,13);
-
-                gotoxy(36,12);
-                cout<<"Nombre";
-                cuadro(26,11,52,13);
-
-                gotoxy(60,12);
-                cout<<"Apellidos";
-                cuadro(52,11,77,13);
-
-                gotoxy(84,12);
-                cout<<"Cargo";
-                cuadro(77,11,97,13);
-
-                gotoxy(101,12);
-                cout<<"Salario";
-                cuadro(97,11,110,13);
-
-
-                for (int i = 0; i < indice; i++) {
-                    strcpy(auxApe, ape[i]);
-                    char *token = strtok(auxApe, " ");
-                    if(token != NULL){
-                        while(token != NULL){
-                            if (strcmp(recepApe, token) == 0) {
-                                y++;
-
-                                gotoxy(11,y);
-                                cout<<(i+1)-(a--);
-
-                                gotoxy(16,y);
-                                cout<<dui[i];
-
-                                gotoxy(33,y);
-                                cout<<nom[i];
-
-                                gotoxy(58,y);
-                                cout<<ape[i];
-
-                                gotoxy(80,y);
-                                cout<<cargo[i];
-                            
-                                gotoxy(101,y);
-                                cout<<"$"<<salario[i];
-                            }
-                            token = strtok(NULL, " ");
-                        }
-                    }
-                    //strtok(primerNom, " ");
-                    ++a;
-                }
-                
-                getch();
-            }
-            
-        }
-
-    }while(validar_cadena(recepApe) > 0);
-}
-
-void buscarCargo(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int indice) {
-    char recepCargo[50], auxCargo[50];
-    bool exist = false;
-    int val = 0, a = 0;
-
-    do {
-        system("cls");
-        int y = 13;
-        int id = -2;
-        header();
-        gotoxy(10,9);
-        printf("%c Registro de descuentos / Buscar empleado",254);
-        gotoxy(10, 11);
-        cout<<"Escriba el cargo del empleado a buscar o [1] para cancelar: ";
-        gets(recepCargo);
-        recepCargo[0] = toupper(recepCargo[0]);
-
-        if(validar_cadena(recepCargo) > 0 || (recepCargo[0] == '\0') || (recepCargo[0] == ' ')){
-            gotoxy(28,y+5);
-            cout<<ANSI_COLOR_RED<<"Error: Cargo invalido";
-            cuadro(26,y+4,88,y+6);cout<<ANSI_COLOR_RESET;
-            getch();
-        }else {
-            if(indice <= 0){
-                gotoxy(32,y+2);
-                cout<<"No hay empleados registrados, por favor ingrese datos"<<endl;
-                getch();
-            }else {
-                gotoxy(10,9);
-                printf("%c Registro de empleados / Buscar empleado",254);
-
-                gotoxy(11,12);
-                printf("N%c", 167);
-                cuadro(8,11,15,13);
-
-                gotoxy(19,12);
-                cout<<"DUI";
-                cuadro(15,11,26,13);
-
-                gotoxy(36,12);
-                cout<<"Nombre";
-                cuadro(26,11,52,13);
-
-                gotoxy(60,12);
-                cout<<"Apellidos";
-                cuadro(52,11,77,13);
-
-                gotoxy(84,12);
-                cout<<"Cargo";
-                cuadro(77,11,97,13);
-
-                gotoxy(101,12);
-                cout<<"Salario";
-                cuadro(97,11,110,13);
-
-
-                for (int i = 0; i < indice; i++) {
-                    strcpy(auxCargo, cargo[i]);
-                    char *token = strtok(auxCargo, " ");
-                    if(token != NULL){
-                        while(token != NULL){
-                            if (strcmp(recepCargo, token) == 0) {
-                                y++;
-
-                                gotoxy(11,y);
-                                cout<<(i+1)-(a--);
-
-                                gotoxy(16,y);
-                                cout<<dui[i];
-
-                                gotoxy(33,y);
-                                cout<<nom[i];
-
-                                gotoxy(58,y);
-                                cout<<ape[i];
-
-                                gotoxy(80,y);
-                                cout<<cargo[i];
-                            
-                                gotoxy(101,y);
-                                cout<<"$"<<salario[i];
-                            }
-                            token = strtok(NULL, " ");
-                        }
-                    }
-                    //strtok(primerNom, " ");
-                    ++a;
-                }
-                
-                getch();
-            }
-            
-        }
-
-    }while(validar_cadena(recepCargo) > 0);
+                       
+    }while (duiDrop != 1);
 }
 
 //alinear objetos-
