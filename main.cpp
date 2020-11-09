@@ -30,7 +30,7 @@ void registroEmpleados_registrar(int [row], char [row][cols], char [row][cols], 
 void registroEmpleados_edit(int [row], char [row][cols], char [row][cols], char [row][cols], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroEmpleados_delete(int [row], char [row][cols], char [row][cols], char [row][cols], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroDescuentos(int [row], char [row][cols], char [row][cols], char [row][cols], float [row], int);
-int buscarEmpleados(char[50], int [row], char [row][cols], char [row][cols], char [row][cols], float [row], int, /*int&,*/ char[25], char[25], int&, int&);
+int buscarEmpleados(char[50], int [row], char [row][cols], char [row][cols], char [row][cols], float [row], int, char[25], char[25], int&, int&);
 bool verificarEmpleado(char [50], char [row][cols], int);
 void mostrarEmpleados(char [50], char [row][cols], int [row], char [row][cols], char [row][cols], char [row][cols], float [row], int, int [], int&, int&);
 
