@@ -6,6 +6,8 @@
 #include <string.h>
 #include <windows.h>
 #include <ctype.h>
+#include <iomanip>
+#include <math.h>
 #define row 100
 #define cols 50
 #define ANSI_COLOR_RED     "\x1b[91m"
@@ -15,7 +17,7 @@
 
 
 using namespace std;
-
+// Prototipos Modulo Adonay
 void header();
 void headerWithoutsquare();
 int isalpha(int);
@@ -29,7 +31,10 @@ void registroEmpleados(int [row], char [row][cols], char [row][cols], char [row]
 void registroEmpleados_registrar(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroEmpleados_edit(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroEmpleados_delete(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
-
+// Funciones Adonay
+// Mis prototipos de funciones
+void planillaMensual(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int& indice);
+void cuadroPlanillas(int x1, int y1, int x2, int y2);
 int main(){
 
     int op;
@@ -76,18 +81,17 @@ int main(){
     }; 
     
     float salario[row] = {2100,900,1400,1000,1830,800,1200,2001};
-   
+
     system("title Sistema de Planillas");
 
     do{
-   
         op = menu();
 
         switch(op){
             case 1: system("cls");registroEmpleados(dui, nom, ape, cargo, salario, indice);break;
             case 2: system("cls");cout<<"Modulo en proceso";break;
-            case 3: system("cls");cout<<"Modulo en proceso";break;
-            case 4: system("cls");cout<<"Modulo en proceso";break;
+            case 3: system("cls");planillaMensual(dui, nom, ape, cargo, salario, indice);break; // Mi modulo correspondiente, planilla mensual
+            case 4: system("cls");cout<<"Modulo en proceso";break; // Mi modulo correspondiente, planilla quincenal
             case 5: system("cls");cout<<"Modulo en proceso";break;
             case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Modulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
@@ -99,7 +103,7 @@ int main(){
     return 0;
 }
 
-int menu(){
+int menu(){// Mis opciones [3] y [4]
 
     char opAux[2];
     int opcion;
@@ -129,9 +133,101 @@ int menu(){
     fflush(stdin);
     opcion = validar_numero(opAux);
 
-    return opcion;
-}
+    return opcion; 
+} // Menu para hacer uso
+// Aqui inician mis modulos
+void planillaMensual(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int& indice)
+{
+    int y = 13;
+    float AFP[100], isss[100]; // podria hacerse con estructura!
+    // cuadro(4,6,114,28);
+    system("cls");
+    system("mode con: cols=160 lines=30");
+    gotoxy(42,3);
+    cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+        if(indice > 8){
+            cuadroPlanillas(4,6,153,20+indice);
+        }else{
+            cuadroPlanillas(4,6,153,28);
+        }
+        cuadro(4,1,153,5);
+        gotoxy(10,9);
+        printf("%c Planilla / Mensual",254);
 
+        gotoxy(16,12);
+        cout<<"DUI";
+        cuadro(8,11,26,13);
+
+        gotoxy(36,12);
+        cout<<"Nombre";
+        cuadro(26,11,52,13);
+
+        gotoxy(60,12);
+        cout<<"Apellidos";
+        cuadro(52,11,77,13);
+
+        gotoxy(84,12);
+        cout<<"Cargo";
+        cuadro(77,11,97,13);
+
+        gotoxy(101,12);
+        cout<<"AFP";
+        cuadro(97,11,110,13);
+        
+        gotoxy(115,12);
+        cout<<"ISSS";
+        cuadro(110,11,123,13);
+        
+        gotoxy(125,12);
+        cout<<"Descuentos";
+        cuadro(123,11,136,13);
+        
+        gotoxy(138,12);
+        cout<<"Salario";
+        cuadro(136,11,149,13);
+        if(indice <= 0){
+            gotoxy(32,y+2);
+            cout<<"No hay empleados registrados, por favor ingrese datos";
+            getch();
+        }else{
+            for(int i = 0; i < indice; i++){
+
+                y++;
+
+                gotoxy(12,y);
+                cout<<dui[i];
+
+                gotoxy(28,y);
+                for(int j = 0; j < strlen(nom[i]); j++){
+                    cout<<nom[i][j];
+                }
+                gotoxy(54,y);
+                for(int j = 0; j < strlen(ape[i]); j++){
+                    cout<<ape[i][j];
+                }
+
+                gotoxy(79,y);
+                for(int j = 0; j < strlen(cargo[i]); j++){
+                    cout<<cargo[i][j];
+                }
+
+                gotoxy(100,y);
+                AFP[i] = (salario[i]*0.0725); // Aqui recibire el calculo del modulo de Walter!!
+                cout << "$" << setprecision(5) << AFP[i];
+
+                gotoxy(114,y);
+                isss[i] = (salario[i]*0.03); // Parte del modulo de Walter
+                cout << "$" << ceil(isss[i]) << ".00";
+
+                gotoxy(140,y);
+                cout<<"$"<<salario[i];
+                /* FALTAN LOS DEMAS CAMPOS */
+            }
+        }
+    getch();
+    system("mode con: cols=120 lines=30");
+}
+// Aqui inicia el modulo de Adonay @xdesprox
 void registroEmpleados(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int& indice){
 
     char select[2];
@@ -163,7 +259,8 @@ void registroEmpleados(int dui[row], char nom[row][cols], char ape[row][cols], c
             case 2: system("cls"); registroEmpleados_edit(dui, nom, ape, cargo, salario, indice); break;
             case 3: system("cls"); registroEmpleados_delete(dui, nom, ape, cargo, salario, indice);break;
             case 4: break;
-            default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: opcion incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;;getch();//Mensaje modulo no encontrado
+            default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: opcion incorrecta";
+            cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;;getch();//Mensaje modulo no encontrado
         }
 
     }while(op != 4);
@@ -731,7 +828,22 @@ void cuadro(int x1, int y1, int x2, int y2){
     gotoxy(x2,y1);printf("%c",191);
     gotoxy(x2,y2);printf("%c",217);
 }
+void cuadroPlanillas(int x1, int y1, int x2, int y2){
+    for(int i = x1; i < x2; i++){	
+		gotoxy(i,y1);printf("%c",196); //Linea arriba
+		gotoxy(i,y2);printf("%c",196); //Linea abajo
+    }
 
+    for (int i = y1; i < y2; i++){	
+		gotoxy(x1,i);printf("%c",179); //Linea derecha
+		gotoxy(x2,i);printf("%c",179); //Linea izquierda
+    }
+    //Esquinas
+    gotoxy(x1,y1);printf("%c",218); 
+    gotoxy(x1,y2);printf("%c",192);
+    gotoxy(x2,y1);printf("%c",191);
+    gotoxy(x2,y2);printf("%c",217);
+}
 //Funcion del texto de cabecera
 void header(){
     cuadro(4,6,114,28);
@@ -774,3 +886,4 @@ int validar_cadena(char palabra[row]){
     return contador;
 
 }
+// Hasta aqui llega el modulo de Adonay @xdesprox
