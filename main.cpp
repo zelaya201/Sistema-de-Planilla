@@ -15,9 +15,8 @@
 #define ANSI_COLOR_YELLOWLIGTH     "\x1b[93m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-
 using namespace std;
-// Prototipos Modulo Adonay
+
 void header();
 void headerWithoutsquare();
 int isalpha(int);
@@ -31,11 +30,12 @@ void registroEmpleados(int [row], char [row][cols], char [row][cols], char [row]
 void registroEmpleados_registrar(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroEmpleados_edit(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
 void registroEmpleados_delete(int [row], char [row][cols], char [row][cols], char [row][25], float [row], int &);//dui, nombre, apellidos, cargo, salario, indice
-// Funciones Adonay
-// Mis prototipos de funciones
+// prototipos para las planillas
 void planillaMensual(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int& indice);
+// void repDescuento(int mes /*  */);
 void cuadroPlanillas(int x1, int y1, int x2, int y2);
-int main(){
+void menuMeses();
+int main(){ // Funcion principal
 
     int op;
 
@@ -46,11 +46,17 @@ int main(){
 
     /* PARA PROBAR Y EVITARSE ESTAR REGISTRANDO DATOS XD */
 
-    int dui[row] = {12345678,87654321,17283782,10293827,29382019,20391827,99281762,28379120};
+    int dui[row] = {12345678,87654321,17283782,10293827,29382019,20391827,99281762,28379120,17283782,10293827,29382019,20391827,99281762,28379120};
     int indice = 8;
     char nom[row][cols] = {
         {"Josue Adonay"},
         {"Walter Alejandro"},
+        {"Julio Antonio"},
+        {"Keneth Valerio"},
+        {"Mario Ernesto"},
+        {"Shelsy Yamileth"},
+        {"Karla Beatriz"},
+        {"Luis Fernando"},
         {"Julio Antonio"},
         {"Keneth Valerio"},
         {"Mario Ernesto"},
@@ -66,7 +72,13 @@ int main(){
         {"Zelaya Lainez"},
         {"Constanza Abarca"},
         {"Aguilar Martinez"},
-        {"Vaquerano Ramos"}
+        {"Vaquerano Ramos"},
+        {"Aguilar Rivas"},
+        {"Morales Quintanilla"},
+        {"Torres Rodriguez"},
+        {"Ramirez Constanza"},
+        {"Zelaya Lainez"},
+        {"Constanza Abarca"}
     };
 
     char cargo[row][25] = {
@@ -77,10 +89,16 @@ int main(){
         {"Ingeniero"},
         {"Servicio Social"},
         {"Disenador Grafico"},
+        {"Periodista"},
+        {"Analista"},
+        {"Redes"},
+        {"Ingeniero"},
+        {"Servicio Social"},
+        {"Disenador Grafico"},
         {"Periodista"}
     }; 
     
-    float salario[row] = {2100,900,1400,1000,1830,800,1200,2001};
+    float salario[row] = {2100,900,1400,1000,1830,800,1200,2001,900,1400,1000,1830,800,1200};
 
     system("title Sistema de Planillas");
 
@@ -91,7 +109,7 @@ int main(){
             case 1: system("cls");registroEmpleados(dui, nom, ape, cargo, salario, indice);break;
             case 2: system("cls");cout<<"Modulo en proceso";break;
             case 3: system("cls");planillaMensual(dui, nom, ape, cargo, salario, indice);break; // Mi modulo correspondiente, planilla mensual
-            case 4: system("cls");cout<<"Modulo en proceso";break; // Mi modulo correspondiente, planilla quincenal
+            case 4: system("cls");cout<<"Modulo en proceso";break; // Modulo planilla quincenal, Julio
             case 5: system("cls");cout<<"Modulo en proceso";break;
             case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Modulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
@@ -135,56 +153,89 @@ int menu(){// Mis opciones [3] y [4]
 
     return opcion; 
 } // Menu para hacer uso
-// Aqui inician mis modulos
+// Modulo Julio Torres
+/* void menuMeses(){
+    gotoxy(43,3);
+    headerWithoutsquare();
+    cuadroPlanillas(4,6,153,28);
+    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    int i = 12;
+    for (int x = 0; x < 1; x++)
+    {
+        for (int y = 0; y < 12; y++)
+        {
+            gotoxy(13, i + y);
+            cout << y + 1 << '.' << meses[y] << " ";
+            cout << endl;
+        }
+        // cout << endl;
+    }
+    
+    for (int me = 0; me < 12; me++)
+    {
+        if (strcmp(meses[me], correcto[me]) == 0)
+        {
+            cout << meses[me];
+        }
+        
+    } 
+    getch();
+} */
 void planillaMensual(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][25], float salario[row], int& indice)
 {
-    int y = 13;
-    float AFP[100], isss[100]; // podria hacerse con estructura!
+    int y = 13,i = 12;
+    float AFP[100], isss[100]; // podria hacerse con estructura
+    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     // cuadro(4,6,114,28);
-    system("cls");
     system("mode con: cols=160 lines=30");
-    gotoxy(42,3);
+    system("cls");
+    gotoxy(43,3);
     cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
-        if(indice > 8){
+        if(indice > 9){
             cuadroPlanillas(4,6,153,20+indice);
         }else{
             cuadroPlanillas(4,6,153,28);
         }
         cuadro(4,1,153,5);
         gotoxy(10,9);
-        printf("%c Planilla / Mensual",254);
-
-        gotoxy(16,12);
+        printf("%c Planilla Mensual / Aqui el mes",254); // Aqui el mes pasado por el modulo de descuentos para mostrar
+    
+    getch();
+        gotoxy(12,12);
         cout<<"DUI";
-        cuadro(8,11,26,13);
+        cuadro(8,11,20,13);
 
-        gotoxy(36,12);
+        gotoxy(27,12);
         cout<<"Nombre";
-        cuadro(26,11,52,13);
+        cuadro(20,11,42,13);
 
-        gotoxy(60,12);
+        gotoxy(48,12);
         cout<<"Apellidos";
-        cuadro(52,11,77,13);
+        cuadro(42,11,66,13);
 
-        gotoxy(84,12);
+        gotoxy(71,12);
         cout<<"Cargo";
-        cuadro(77,11,97,13);
+        cuadro(66,11,86,13);
 
-        gotoxy(101,12);
-        cout<<"AFP";
-        cuadro(97,11,110,13);
-        
-        gotoxy(115,12);
-        cout<<"ISSS";
-        cuadro(110,11,123,13);
-        
-        gotoxy(125,12);
-        cout<<"Descuentos";
-        cuadro(123,11,136,13);
-        
-        gotoxy(138,12);
+        gotoxy(89,12);
         cout<<"Salario";
-        cuadro(136,11,149,13);
+        cuadro(86,11,99,13);
+        
+        gotoxy(104,12);
+        cout<<"AFP";
+        cuadro(99,11,112,13);
+        
+        gotoxy(116,12);
+        cout<<"ISSS";
+        cuadro(112,11,125,13);
+        
+        gotoxy(127,12);
+        cout<<"Descuentos";
+        cuadro(125,11,138,13);
+
+        gotoxy(140,12);
+        cout<<"Salario N";
+        cuadro(138,11,150,13);
         if(indice <= 0){
             gotoxy(32,y+2);
             cout<<"No hay empleados registrados, por favor ingrese datos";
@@ -194,34 +245,40 @@ void planillaMensual(int dui[row], char nom[row][cols], char ape[row][cols], cha
 
                 y++;
 
-                gotoxy(12,y);
+                gotoxy(10,y);
                 cout<<dui[i];
 
-                gotoxy(28,y);
+                gotoxy(22,y);
                 for(int j = 0; j < strlen(nom[i]); j++){
                     cout<<nom[i][j];
                 }
-                gotoxy(54,y);
+                gotoxy(44,y);
                 for(int j = 0; j < strlen(ape[i]); j++){
                     cout<<ape[i][j];
                 }
 
-                gotoxy(79,y);
+                gotoxy(68,y);
                 for(int j = 0; j < strlen(cargo[i]); j++){
                     cout<<cargo[i][j];
                 }
 
-                gotoxy(100,y);
+                gotoxy(88,y); // AFP
+                cout<<"$"<<salario[i];
+                
+                gotoxy(103,y);
                 AFP[i] = (salario[i]*0.0725); // Aqui recibire el calculo del modulo de Walter!!
                 cout << "$" << setprecision(5) << AFP[i];
-
-                gotoxy(114,y);
+        
+                gotoxy(116,y);
                 isss[i] = (salario[i]*0.03); // Parte del modulo de Walter
                 cout << "$" << ceil(isss[i]) << ".00";
 
-                gotoxy(140,y);
-                cout<<"$"<<salario[i];
-                /* FALTAN LOS DEMAS CAMPOS */
+                gotoxy(127,y);
+                cout << "000.00";
+                /* Aqui el mostrar el modulo de Mario */
+
+                gotoxy(141, y);
+                cout << "000.00";
             }
         }
     getch();
