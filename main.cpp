@@ -46,7 +46,7 @@ int main(){ // Funcion principal
 
     /* PARA PROBAR Y EVITARSE ESTAR REGISTRANDO DATOS XD */
 
-    int dui[row] = {12345678,87654321,17283782,10293827,29382019,20391827,99281762,28379120,17283782,10293827,29382019,20391827,99281762,28379120};
+    int dui[row] = {12345678,87654321,17283782,10293827,29382019,20391827,99281762,28379120};
     int indice = 8;
     char nom[row][cols] = {
         {"Josue Adonay"},
@@ -73,12 +73,6 @@ int main(){ // Funcion principal
         {"Constanza Abarca"},
         {"Aguilar Martinez"},
         {"Vaquerano Ramos"},
-        {"Aguilar Rivas"},
-        {"Morales Quintanilla"},
-        {"Torres Rodriguez"},
-        {"Ramirez Constanza"},
-        {"Zelaya Lainez"},
-        {"Constanza Abarca"}
     };
 
     char cargo[row][25] = {
@@ -90,15 +84,9 @@ int main(){ // Funcion principal
         {"Servicio Social"},
         {"Disenador Grafico"},
         {"Periodista"},
-        {"Analista"},
-        {"Redes"},
-        {"Ingeniero"},
-        {"Servicio Social"},
-        {"Disenador Grafico"},
-        {"Periodista"}
     }; 
     
-    float salario[row] = {2100,900,1400,1000,1830,800,1200,2001,900,1400,1000,1830,800,1200};
+    float salario[row] = {2100,900,1400,1000,1830,800,1200,2001};
 
     system("title Sistema de Planillas");
 
