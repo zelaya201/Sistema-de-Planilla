@@ -198,7 +198,7 @@ void planillaMensual(int dui[row], char nom[row][cols], char ape[row][cols], cha
         }
         cuadro(4,1,153,5);
         gotoxy(10,9);
-        printf("%c Planilla Mensual / Aqui el mes",254); // Aqui el mes pasado por el modulo de descuentos para mostrar
+        printf("%c Planilla Mensual / Aqui el mes",254); // El mes elegido del menu
     
     getch();
         gotoxy(12,12);
