@@ -783,6 +783,7 @@ void registroEmpleados_delete(int dui[row], char nom[row][cols], char ape[row][c
 }
 
 void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][cols], float salario[row], int indice) {
+    system("mode con: cols=150 line=40");
     int seleccion, DS, y, p, diasD, idMes; 
     char recep[50], diasDC[2];  
     char str1[25] = "descuentos", str2[25] = "Buscar empleado";
