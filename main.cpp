@@ -94,7 +94,6 @@ int main(){
     system("title Sistema de Planillas"); //Titulo de ventana
 
     do{
-   
         op = menu(); //opcion
 
         switch(op){
@@ -326,7 +325,7 @@ void registroEmpleados_edit(int dui[row], char nom[row][cols], char ape[row][col
     
     do{
         p = 0; 
-        seleccion = 0;
+        //seleccion = 0;
         system("cls");
         header();
         cuadro(6,20,112,27);
@@ -466,7 +465,7 @@ void registroEmpleados_edit(int dui[row], char nom[row][cols], char ape[row][col
             }while(validar != 1);
         }
 
-    }while(seleccion != 1);
+    }while(DS != 1);
 
 }
 
@@ -644,7 +643,7 @@ void registroEmpleados_delete(int dui[row], char nom[row][cols], char ape[row][c
             }while(validar != 1);
         }   
 
-    }while(seleccion != 1);
+    }while(duiDrop != 1);
 }
 
 void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], char cargo[row][cols], float salario[row], int indice) {
@@ -690,6 +689,7 @@ void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], 
                 mensaje += "Descuentos realizados correctamente.";
                 mensaje += ANSI_COLOR_RESET;
                 validar = 0;
+                count = 0;
                 headerWithoutsquare();
                 cuadro(4,6,114,31);
                 cuadro(6,24,112,30);
@@ -755,7 +755,7 @@ void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], 
                     errores += ANSI_COLOR_RED;
                     errores += "- Mes ingresado incorrecto.";
                     errores += ANSI_COLOR_RESET;
-                }else if((validar_cadena(mesSelec) == '\0') || (validar_cadena(mesSelec) == ' ')){
+                }else if((validar_cadena(mesSelec) == '\0') && (validar_cadena(mesSelec) == ' ' && idMes == -1)){
                     count++;
                 }
                 gotoxy(55,y-1);
@@ -788,7 +788,7 @@ void registroDescuentos(int dui[row], char nom[row][cols], char ape[row][cols], 
                     gotoxy(20,25);
                     cout<<mensaje;
                     validar = 1;
-                }else{
+                }else {
                     mensaje = ANSI_COLOR_YELLOWLIGTH;
                     mensaje += "No se realiz\xA2 ning\xA3n descuento.";
                     mensaje += ANSI_COLOR_RESET;
