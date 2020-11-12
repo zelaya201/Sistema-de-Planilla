@@ -43,6 +43,7 @@ void header(); //Diseño completo (Cabecera y cuadro del cuerpo)
 void headerWithoutsquare(); //Solo cabecera
 void gotoxy(int, int );// x - y
 void cuadro(int, int, int, int);//derecha, arriba, izquierda, abajo
+void cls(int, int , int);
 int menu();
 int validar_numero(char []);
 int validar_cadena(char []);
@@ -342,28 +343,32 @@ void registroEmpleados(Empleados e[100], int& indice){
 void registroEmpleados_registrar(Empleados e[100], int& indice){
 
     int cant, cifras, duiAux;
-    int  validar, retorno;
+    int centinela;
     char DV[9], SV[10];
     char *salarioAux;
     string errores, mensaje;
-    
+
+    system("cls");
+
+    header();
+    cuadro(6,20,112,27);
+    gotoxy(8,21);
+    cout<<"Mensaje(s): ";
+    gotoxy(8,23);
+    cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Dig\xA1ta [1] en cualquier campo para volver."<<ANSI_COLOR_RESET;
+    gotoxy(10,9);
+    printf("%c Registro de empleados / Registrar",254);
+
+    /* DUI */
+
     do{
+        centinela = 1;
         cant = 1;
         cifras = 1;
         duiAux = 0;
-        retorno = 0;
-        errores = "\0";
 
-        system("cls");
+        cls(70, 11, 11);
 
-        header();
-        cuadro(6,20,112,27);
-        gotoxy(8,21);
-        cout<<"Mensaje(s): ";
-        gotoxy(8,23);
-        cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Dig\xA1ta [1] en el campo de DUI para volver."<<ANSI_COLOR_RESET;
-        gotoxy(10,9);
-        printf("%c Registro de empleados / Registrar",254);
         gotoxy(11,11);
         printf("N%c de DUI: ",167);
         gets(DV);
@@ -371,95 +376,158 @@ void registroEmpleados_registrar(Empleados e[100], int& indice){
 
         e[indice].dui = validar_numero(DV);
 
+        //Si hay otro dui igual
         for(int i = 0; i < row; i++){
             if((e[indice].dui == e[i].dui) && (i != indice)){
                 cant++;
             }
         }
 
+        //Si digita uno regresa
         if(e[indice].dui == 1){
             goto salir;
         }
 
+        //Se alamace el dui en la variable aux
         duiAux = e[indice].dui;
 
+        //Cantidad de cifras del dui digitado
         while(duiAux >= 10){
             duiAux /= 10;
             cifras++;
         }
 
-        if(cifras != 8){
-            errores += "\n\t\t";
-            errores += "- N\xA3mero de DUI menor o mayor a 8 cifras y/o incorrecto.";
+        if(cifras != 8){ 
+            errores = "N\xA3mero de DUI mayor o menor a 8 cifras y/o incorrecto.";
+            gotoxy(20,21);
+            cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            centinela = 0;
+            getch();
+            cls(54, 20, 21);
         }else if(cant > 1){
-            errores += "\n\t\t";
-            errores += "- N\xA3mero de DUI ya existente, ingrese otro.";
+            errores = "N\xA3mero de DUI ya existente, ingrese otro.";
+            gotoxy(20,21);
+            cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            centinela = 0;
+            getch();
+            cls(54, 20, 21);
         }
+
+        
+    }while(centinela != 1);   
+
+    /* NOMBRE */
+
+    do{
+        centinela = 1;
+        cls(70, 11, 12);
 
         gotoxy(11,12);
         cout<<"Nombre: ";
         gets(e[indice].nom);
 
-        if(validar_cadena(e[indice].nom) > 0 || (e[indice].nom[0] == '\0') || (e[indice].nom[0] == ' ')){
-            errores += "\n\t\t";
-            errores += "- Nombre incorrecto.";
+        //Si digita uno regresa
+        if(e[indice].nom[0] == '1'){
+            goto salir;
         }
+
+        if(validar_cadena(e[indice].nom) > 0 || (e[indice].nom[0] == '\0') || (e[indice].nom[0] == ' ')){
+            errores = "Nombre incorrecto.";
+            gotoxy(20,21);
+            cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(19, 20, 21);
+            centinela = 0;
+        }
+
+    }while(centinela != 1);  
+
+    /* APELLIDOS */
+
+    do{
+        centinela = 1;
+        cls(70, 11, 13);
 
         gotoxy(11,13);
         cout<<"Apellidos: ";
         gets(e[indice].ape);
 
-        if(validar_cadena(e[indice].ape) > 0 || (e[indice].ape[0] == '\0') || (e[indice].ape[0] == ' ')){
-            errores += "\n\t\t";
-            errores += "- Apellidos incorrectos.";
+        //Si digita uno regresa
+        if(e[indice].ape[0] == '1'){
+            goto salir;
         }
+
+        if(validar_cadena(e[indice].ape) > 0 || (e[indice].ape[0] == '\0') || (e[indice].ape[0] == ' ')){
+            errores = "Apellidos incorrectos.";
+            gotoxy(20,21);
+            cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(23, 20, 21);
+            centinela = 0;
+        }
+
+    }while(centinela != 1);
+
+    /* CARGO */
+    
+    do{
+        centinela = 1;
+        cls(70, 11, 14);
 
         gotoxy(11,14);
         cout<<"Cargo: ";
         gets(e[indice].cargo);
 
-        if(validar_cadena(e[indice].cargo) > 0 || (e[indice].cargo[0] == '\0') || (e[indice].cargo[0] == ' ')){
-            errores += "\n\t\t";
-            errores += "- Cargo escrito incorrectamente.";
+        //Si digita uno regresa
+        if(e[indice].cargo[0] == '1'){
+            goto salir;
         }
+
+        if(validar_cadena(e[indice].cargo) > 0 || (e[indice].cargo[0] == '\0') || (e[indice].cargo[0] == ' ')){
+            errores = "Cargo escrito incorrectamente.";
+            gotoxy(20,21);
+            cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(31, 20, 21);
+            centinela = 0;
+        }
+
+    }while(centinela != 1);
+
+    /* SALARIO */
+    
+    do{
+        centinela = 1;
+        cls(70, 11, 15);
 
         gotoxy(11,15);
         cout<<"Salario: $";
         gets(SV);
         e[indice].salario = strtod(SV, &salarioAux);
 
+        //Si digita uno regresa
+        if(e[indice].salario == 1){
+            goto salir;
+        }
+
         if(e[indice].salario == 0){
-            errores += "\n\t\t";
-            errores += "- Cantidad de salario incorrecta.";
+            errores += "Cantidad de salario incorrecta.";
+            gotoxy(20,21);
+            cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(32, 20, 21);
+            centinela = 0;
         }
 
-        salir:
-        
-        fflush(stdin);
-        if(e[indice].dui != 1){    
-            if(errores != "\0"){
-                
-                for(int i = 0; i < 48; i++){
-                    gotoxy(8+i,23);
-                    cout<<" ";
-                }
-
-                gotoxy(21,21);
-                cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
-                getch();
-            }else{
-                gotoxy(20,21);
-                errores += "Registrado correctamente.";
-                cout<<ANSI_COLOR_GREEN<<errores<<ANSI_COLOR_RESET;
-                indice++;
-                validar = 1;
-                getch();
-            }
-        }else{
-            validar = 1;
-        }
-
-    }while(validar != 1);
+    }while(centinela != 1);
+  
+    gotoxy(20,21);
+    mensaje += "Registrado correctamente.";
+    cout<<ANSI_COLOR_GREEN<<mensaje<<ANSI_COLOR_RESET;
+    indice++;
+    getch();
+    salir:
+    cout<<"";
 }
 
 void registroEmpleados_edit(Empleados e[100], int& indice){
@@ -704,6 +772,10 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
                 gets(opDrop);
 
                 opD = validar_numero(opDrop);
+                //Borra parte de la pantalla
+                cls(27, 43, 22);
+                cls(71, 23, 23);
+                cls(50, 43, 24);
 
                 if(opD == 2){
                     e[seleccion].dui = -1;
@@ -740,22 +812,6 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
                         //Disminuir al indice
                         indice--;
 
-                        //Borra parte de la pantalla
-                        for(int i = 0; i < 27; i++){
-                            gotoxy(43+i,22);
-                            cout<<" ";
-                        }   
-
-                        for(int i = 0; i < 71; i++){
-                            gotoxy(23+i,23);
-                            cout<<" ";
-                        }
-
-                        for(int i = 0; i < 50; i++){
-                            gotoxy(43+i,24);
-                            cout<<" ";
-                        }
-                        
                         //Mensaje
                         gotoxy(47,23);
                         cout<<ANSI_COLOR_GREEN<<" (X) Registro eliminado";
@@ -766,22 +822,6 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
                 }else if(opD == 1){
                         validar = 1;
                 }else{
-                    
-                    //Borra parte de la pantalla
-                    for(int i = 0; i < 27; i++){
-                        gotoxy(43+i,22);
-                        cout<<" ";
-                    }
-
-                    for(int i = 0; i < 71; i++){
-                        gotoxy(23+i,23);
-                        cout<<" ";
-                    }
-
-                    for(int i = 0; i < 50; i++){
-                        gotoxy(43+i,24);
-                        cout<<" ";
-                    }
                     
                     validar = 0;
 
@@ -1321,4 +1361,11 @@ int validar_cadena(char palabra[row]){
     }
 
     return contador;
+}
+
+void cls(int longitud, int posicionX, int posicionY){
+    for(int i = 0; i < longitud; i++){
+        gotoxy(posicionX + i, posicionY);
+        cout<<" ";
+    }
 }
