@@ -203,9 +203,11 @@ int menu(){// Mis opciones [3] y [4]
 } */
 void planillaMensual(Empleados e[100], int& indice)
 {
+    // Tengo que mostrar el menu de meses y que pueda seleccionar, usare el cuadro de los otros
     int y = 13,i = 12;
     float AFP[100], isss[100]; // podria hacerse con estructura
-    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo",
+    "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     // cuadro(4,6,114,28);
     system("mode con: cols=160 lines=30");
     system("cls");
