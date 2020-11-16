@@ -37,6 +37,7 @@ struct Empleados {
     float isss;
     float descuento[12];
     float salarioN[12];
+    int mesP;
 }e[100];
 
 void header(); //Diseño completo (Cabecera y cuadro del cuerpo)
@@ -60,6 +61,7 @@ void planillaMensual(Empleados e[100], int&);
 
 void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
 void menuMeses();
+// float descuentoAplanilla(float&);
 
 int main(){
 
@@ -110,7 +112,7 @@ int main(){
         {"Biologo"}
     }; 
     
-    float salario[row] = {2100,900,1400,1000,1830,800,1200,2001,900}; 
+    float salario[row] = {2100.14,900.25,1400.68,1000.99,1830.12,800,1200,2001,900}; 
     system("title Sistema de Planillas"); //Titulo de ventana
     system("mode con: cols=120 lines=30");
 
@@ -201,14 +203,27 @@ int menu(){// Mis opciones [3] y [4]
     } 
     getch();
 } */
-void planillaMensual(Empleados e[100], int& indice)
+int mesesM()
+{
+    int opMes;
+    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    gotoxy(10,9);
+    printf("%c Planilla Mensual / ",254);
+    gotoxy(14,13);
+        for (int k = 0; k < 12; k++){
+            cout << "\t\t"<<k + 1 << ". " << meses[k] << endl;
+        }
+        cout << "\t\tOpcion: ";cin >> opMes;
+        return opMes - 1;
+        system("cls");
+}
+void planillaMensual(Empleados e[100], int& indice) /* Construir el MENU de los meses */
 {
     // Tengo que mostrar el menu de meses y que pueda seleccionar, usare el cuadro de los otros
-    int y = 13,i = 12;
-    float AFP[100], isss[100]; // podria hacerse con estructura
-    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo",
-    "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-    // cuadro(4,6,114,28);
+    int y = 13,i = 12, mesE;
+    float AFP[100], isss[100], descuentoHecho[100], Adescontar[100]; // podria hacerse con estructura
+    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    
     system("mode con: cols=160 lines=30");
     system("cls");
     gotoxy(43,3);
@@ -218,10 +233,12 @@ void planillaMensual(Empleados e[100], int& indice)
         }else{
             cuadroPlanillas(4,6,153,28);
         }
+        for(int jj = 0; jj < indice; jj++){descuentoHecho[jj] = e[jj].descuento[jj]; Adescontar[jj] = e[jj].salario;}
         cuadro(4,1,153,5);
+        mesE = mesesM();
         gotoxy(10,9);
-        printf("%c Planilla Mensual / Aqui el mes",254); // El mes elegido del menu
-    
+        printf("%c Planilla Mensual / ",254); cout << meses[mesE];// Comparar que IDmes exista junto con el descuento!
+
     getch();
         gotoxy(12,12);
         cout<<"DUI";
@@ -281,28 +298,29 @@ void planillaMensual(Empleados e[100], int& indice)
                 cout<<e[i].cargo;
                 
 
-                gotoxy(88,y); // AFP
-                cout<<"$"<<e[i].salario;
+                gotoxy(89,y); 
+                cout<<"$"<<Adescontar[i];
                 
-                gotoxy(103,y);
-                e[i].afp = (e[i].salario*0.0725); // Aqui recibire el calculo del modulo de Walter!!
-                cout << "$" << setprecision(5) << e[i].afp;
+                // gotoxy(103,y); // AFP
+                // e[i].afp = (e[i].salario*0.0725); // Aqui recibire el calculo del modulo de Walter!!
+                // cout << "$" << setprecision(5) << e[i].afp;
         
-                gotoxy(116,y);
-                e[i].isss = (e[i].salario*0.03); // Parte del modulo de Walter
-                cout << "$" << ceil(e[i].isss) << ".00";
+                // gotoxy(118,y); // ISSS
+                // e[i].isss = (e[i].salario*0.03); // Parte del modulo de Walter
+                // cout << "$" << ceil(e[i].isss) << ".00";
 
-                gotoxy(127,y);
-                cout << "000.00";
+                gotoxy(129,y);
+                if(descuentoHecho[i] == 0){cout<<" N / A ";}else{cout << setprecision(5) << descuentoHecho[i];}
                 /* Aqui el mostrar el modulo de Mario */
 
                 gotoxy(141, y);
-                cout << "000.00";
+                // cout << "000.00";
             }
         }
     getch();
     system("mode con: cols=120 lines=30");
 }
+// float descuentoAplanilla(float&descuentoR){ float descontado; descontado = descuentoR; return descontado;} // Modulo planilla
 // Aqui inicia el modulo de Adonay @xdesprox
 void registroEmpleados(Empleados e[100], int& indice){
 
@@ -851,6 +869,7 @@ void registroDescuentos(Empleados e[100], int indice) {
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     char mesSelec[15] = "\0";
     float salarioDia, descuentoRealizado;
+    float descuentoApla; // Modulo de planillas
     string errores;
     string mensaje;
     int count = 0, validar;
@@ -983,8 +1002,9 @@ void registroDescuentos(Empleados e[100], int indice) {
                 }else if(mensaje != "\0" && count != 2 && diasD != 0){ 
                     e[seleccion].descuento[idMes] = salarioDia * diasD;
                     gotoxy(13,20);
-                    cout<<fixed<<setprecision(2)<<ANSI_COLOR_GREEN<<"Descuento realizado: $"<<(float)e[seleccion].descuento[idMes]<<ANSI_COLOR_RESET;         
-                    gotoxy(20,25);
+                    cout<<fixed<<setprecision(2)<<ANSI_COLOR_GREEN<<"Descuento realizado: $"<<e[seleccion].descuento[idMes]<<ANSI_COLOR_RESET;
+                    e[seleccion].mesP = idMes; /* TRABAJAR CON EL ID DEL MES <> MODULO PLANILLAS */
+                    gotoxy(20,25);   
                     cout<<mensaje;
                     validar = 1;
                 }else {
