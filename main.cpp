@@ -47,15 +47,15 @@ void cls(int, int , int);
 int menu();
 int validar_numero(char []);
 int validar_cadena(char []);
-void registroEmpleados(Empleados e[100], int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
-void registroEmpleados_registrar(Empleados e[100], int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
-void registroEmpleados_edit(Empleados e[100], int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
-void registroEmpleados_delete(Empleados e[100], int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
-void registroDescuentos(Empleados e[100], int);
-int buscarEmpleados(char[50], Empleados e[100], int, char[25], char[25], int&, int&);
-bool verificarEmpleado(char [50], Empleados e[100], int);
-void mostrarEmpleados(char [50], Empleados e[100], int, int [], int&, int&);
-void planillaMensual(Empleados e[100], int&);
+void registroEmpleados(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
+void registroEmpleados_registrar(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
+void registroEmpleados_edit(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
+void registroEmpleados_delete(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
+void registroDescuentos(int);
+int buscarEmpleados(char[50], int, char[25], char[25], int&, int&);
+bool verificarEmpleado(char [50],int);
+void mostrarEmpleados(char [50], int, int [], int&, int&);
+void planillaMensual(int&);
 // void repDescuento(int mes /*  */);
 
 void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
@@ -126,11 +126,11 @@ int main(){
         op = menu(); //opcion
 
         switch(op){
-            case 1: system("cls");registroEmpleados(e, indice);break; //Modulo 1
+            case 1: system("cls");registroEmpleados(indice);break; //Modulo 1
             case 2: system("cls");cout<<"Modulo en proceso";break; //Modulo 2
-            case 3: system("cls");planillaMensual(e, indice);break; //Modulo 3
+            case 3: system("cls");planillaMensual(indice);break; //Modulo 3
             case 4: system("cls");cout<<"Modulo en proceso";break; //Modulo 4
-            case 5: system("cls");registroDescuentos(e, indice);break; //Modulo 5
+            case 5: system("cls");registroDescuentos(indice);break; //Modulo 5
             case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: M"<<"\xA2"<<"dulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
         }
@@ -201,7 +201,7 @@ int menu(){// Mis opciones [3] y [4]
     } 
     getch();
 } */
-void planillaMensual(Empleados e[100], int& indice)
+void planillaMensual(int& indice)
 {
     int y = 13,i = 12;
     float AFP[100], isss[100]; // podria hacerse con estructura
@@ -302,7 +302,7 @@ void planillaMensual(Empleados e[100], int& indice)
     system("mode con: cols=120 lines=30");
 }
 // Aqui inicia el modulo de Adonay @xdesprox
-void registroEmpleados(Empleados e[100], int& indice){
+void registroEmpleados(int& indice){
 
     char select[2];
     int op;
@@ -329,9 +329,9 @@ void registroEmpleados(Empleados e[100], int& indice){
 
         //Submenu
         switch(op){
-            case 1: system("cls"); registroEmpleados_registrar(e, indice); break;
-            case 2: system("cls"); registroEmpleados_edit(e, indice); break;
-            case 3: system("cls"); registroEmpleados_delete(e, indice);break;
+            case 1: system("cls"); registroEmpleados_registrar(indice); break;
+            case 2: system("cls"); registroEmpleados_edit(indice); break;
+            case 3: system("cls"); registroEmpleados_delete(indice);break;
             case 4: break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
         }
@@ -340,7 +340,7 @@ void registroEmpleados(Empleados e[100], int& indice){
 
 }
 
-void registroEmpleados_registrar(Empleados e[100], int& indice){
+void registroEmpleados_registrar(int& indice){
 
     int cant;
     int dui;
@@ -520,7 +520,7 @@ void registroEmpleados_registrar(Empleados e[100], int& indice){
     cout<<"";
 }
 
-void registroEmpleados_edit(Empleados e[100], int& indice){
+void registroEmpleados_edit(int& indice){
 
     //Variables declaradas
     int seleccion, DS;
@@ -558,7 +558,7 @@ void registroEmpleados_edit(Empleados e[100], int& indice){
         
         recep[0] = toupper(recep[0]);//Primera mayuscula
         DS = validar_numero(recep);
-        seleccion = buscarEmpleados(recep, e, indice, str1, str2, p, y); //Funcion buscar
+        seleccion = buscarEmpleados(recep, indice, str1, str2, p, y); //Funcion buscar
 
         if(p == 2){
             do{
@@ -683,7 +683,7 @@ void registroEmpleados_edit(Empleados e[100], int& indice){
 
 }
 
-void registroEmpleados_delete(Empleados e[100], int& indice){
+void registroEmpleados_delete(int& indice){
 
     int duiDrop, j, opD;
     int y, p, validar;
@@ -719,7 +719,7 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
         
         recep[0] = toupper(recep[0]);//Primera mayuscula
         duiDrop = validar_numero(recep);
-        seleccion = buscarEmpleados(recep, e, indice, str1, str2, p, y); //Funcion buscar
+        seleccion = buscarEmpleados(recep, indice, str1, str2, p, y); //Funcion buscar
 
         if(p == 2){
             do{
@@ -833,7 +833,7 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
     }while(duiDrop != 1);
 }
 
-void registroDescuentos(Empleados e[100], int indice) {
+void registroDescuentos(int indice) {
     int seleccion, DS, y, p, diasD, idMes; 
     char recep[50], diasDC[2];  
     char str1[25] = "descuentos", str2[25] = "Buscar empleado";
@@ -863,7 +863,7 @@ void registroDescuentos(Empleados e[100], int indice) {
         gets(recep);
         recep[0] = toupper(recep[0]);
         DS = validar_numero(recep);
-        seleccion = buscarEmpleados(recep, e, indice, str1, str2, p, y);
+        seleccion = buscarEmpleados(recep, indice, str1, str2, p, y);
         
         if (p == 2) {
             do {
@@ -991,7 +991,7 @@ void registroDescuentos(Empleados e[100], int indice) {
     }while (DS != 1);
 }
 
-int buscarEmpleados(char recep[50], Empleados e[100], int indice, char str1[25], char str2[25], int& p, int& y) {
+int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], int& p, int& y) {
     int seleccion, value;
     int auxSeleccion = '\0';
     int Dui;
@@ -1013,7 +1013,7 @@ int buscarEmpleados(char recep[50], Empleados e[100], int indice, char str1[25],
                 cout<<ANSI_COLOR_RED<<"No hay empleados registrados, por favor ingrese datos."<<ANSI_COLOR_RESET;
                 getch();
             }else {
-                exist = verificarEmpleado(recep, e, indice);
+                exist = verificarEmpleado(recep, indice);
                 
 
                 if (!exist) {
@@ -1051,7 +1051,7 @@ int buscarEmpleados(char recep[50], Empleados e[100], int indice, char str1[25],
 
                         
                         if (exist) {
-                            mostrarEmpleados(recep, e, indice, pointer, y, c);
+                            mostrarEmpleados(recep, indice, pointer, y, c);
                         }
                         
                         headerWithoutsquare();
@@ -1117,7 +1117,7 @@ int buscarEmpleados(char recep[50], Empleados e[100], int indice, char str1[25],
     return seleccion;
 }
 
-bool verificarEmpleado(char recep[50], Empleados e[100], int indice) {
+bool verificarEmpleado(char recep[50], int indice) {
     bool exist = false;
     char auxNom[50] = "\0", auxApe[50] = "\0", auxCargo[50] = "\0";
 
@@ -1162,7 +1162,7 @@ bool verificarEmpleado(char recep[50], Empleados e[100], int indice) {
     return exist;
 }
 
-void mostrarEmpleados(char recep[50], Empleados e[100], int indice, int pointer[], int& y, int& x) {
+void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x) {
     int a, c;
     char auxNom[50] = "\0", auxApe[50] = "\0", auxCargo[50] = "\0";
 
