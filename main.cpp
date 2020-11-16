@@ -28,7 +28,7 @@
 using namespace std;
 
 struct Empleados {
-    int dui;
+    char dui[10];
     char nom[50];
     char ape[50];
     char cargo[50];
@@ -72,7 +72,7 @@ int main(){
 
     /* PARA PROBAR Y EVITARSE ESTAR REGISTRANDO DATOS XD */
 
-    int dui[row] = {12345678,87654321,17283782,10293827,29382019,20391827,99281762,28379120,90908990};
+    char dui[row][10] = {{"012345678"},{"087654321"},{"017283782"},{"010293827"},{"029382019"},{"020391827"},{"099281762"},{"028379120"},{"090908990"}};
     int indice = 9;
     char nom[row][cols] = {
         {"Josue Adonay"},
@@ -115,7 +115,7 @@ int main(){
     system("mode con: cols=120 lines=30");
 
     for (int i = 0; i < indice; i++) {
-        e[i].dui = dui[i];
+        strcpy(e[i].dui, dui[i]);
         strcpy(e[i].nom, nom[i]);
         strcpy(e[i].ape, ape[i]);
         strcpy(e[i].cargo, cargo[i]);
@@ -342,9 +342,10 @@ void registroEmpleados(Empleados e[100], int& indice){
 
 void registroEmpleados_registrar(Empleados e[100], int& indice){
 
-    int cant, cifras, duiAux;
+    int cant;
+    int dui;
     int centinela;
-    char DV[9], SV[10];
+    char SV[10];
     char *salarioAux;
     string errores, mensaje;
 
@@ -364,41 +365,30 @@ void registroEmpleados_registrar(Empleados e[100], int& indice){
     do{
         centinela = 1;
         cant = 1;
-        cifras = 1;
-        duiAux = 0;
 
         cls(70, 11, 11);
 
         gotoxy(11,11);
         printf("N%c de DUI: ",167);
-        gets(DV);
+        gets(e[indice].dui);
         fflush(stdin);
 
-        e[indice].dui = validar_numero(DV);
+        dui = validar_numero(e[indice].dui);
 
         //Si hay otro dui igual
-        for(int i = 0; i < row; i++){
-            if((e[indice].dui == e[i].dui) && (i != indice)){
+        for(int i = 0; i < indice; i++){
+            if((strcmp(e[indice].dui, e[i].dui) == 0) && (i != indice)){
                 cant++;
             }
         }
 
         //Si digita uno regresa
-        if(e[indice].dui == 1){
+        if(strcmp(e[indice].dui, "1") == 0){
             goto salir;
         }
 
-        //Se alamace el dui en la variable aux
-        duiAux = e[indice].dui;
-
-        //Cantidad de cifras del dui digitado
-        while(duiAux >= 10){
-            duiAux /= 10;
-            cifras++;
-        }
-
-        if(cifras != 8){ 
-            errores = "N\xA3mero de DUI mayor o menor a 8 cifras y/o incorrecto.";
+        if(strlen(e[indice].dui) != 9 || dui == -1){ 
+            errores = "N\xA3mero de DUI mayor o menor a 9 cifras y/o incorrecto.";
             gotoxy(20,21);
             cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
             centinela = 0;
@@ -427,7 +417,7 @@ void registroEmpleados_registrar(Empleados e[100], int& indice){
         gets(e[indice].nom);
 
         //Si digita uno regresa
-        if(e[indice].nom[0] == '1'){
+        if(strcmp(e[indice].nom, "1") == 0){
             goto salir;
         }
 
@@ -453,7 +443,7 @@ void registroEmpleados_registrar(Empleados e[100], int& indice){
         gets(e[indice].ape);
 
         //Si digita uno regresa
-        if(e[indice].ape[0] == '1'){
+        if(strcmp(e[indice].nom, "1") == 0){
             goto salir;
         }
 
@@ -479,7 +469,7 @@ void registroEmpleados_registrar(Empleados e[100], int& indice){
         gets(e[indice].cargo);
 
         //Si digita uno regresa
-        if(e[indice].cargo[0] == '1'){
+        if(strcmp(e[indice].cargo, "1") == 0){
             goto salir;
         }
 
@@ -549,7 +539,7 @@ void registroEmpleados_edit(Empleados e[100], int& indice){
     
     do{
         p = 0; 
-        //seleccion = 0;
+        seleccion = 0;
         system("cls");
         header();
         cuadro(6,20,112,27);
@@ -587,7 +577,7 @@ void registroEmpleados_edit(Empleados e[100], int& indice){
                 cout<<"Mensaje(s): ";
         
                 gotoxy(10,9);
-                printf("%c Registro de empleados / Editar / DUI: %d",254,e[seleccion].dui);
+                printf("%c Registro de empleados / Editar / DUI: %s",254,e[seleccion].dui);
                 gotoxy(8,23);
                 cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Presiona [Enter] consecutivos si no desea realizar cambios."<<ANSI_COLOR_RESET;
                 //Editar e.e[i].nombre
@@ -697,8 +687,9 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
 
     int duiDrop, j, opD;
     int y, p, validar;
-    int auxdui, seleccion;
+    int seleccion;
     float auxsalario;
+    char auxdui[10];
     char auxNom[cols];
     char auxApe[cols];
     char auxCargo[cols];
@@ -735,7 +726,7 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
                 system("cls");
                 header();
                 gotoxy(10,9);
-                printf("%c Registro de empleados / Eliminar / DUI: %d",254,e[seleccion].dui);
+                printf("%c Registro de empleados / Eliminar / DUI: %s",254,e[seleccion].dui);
 
                 cuadro(18,11,99,25);
                 gotoxy(43,12);
@@ -778,15 +769,15 @@ void registroEmpleados_delete(Empleados e[100], int& indice){
                 cls(50, 43, 24);
 
                 if(opD == 2){
-                    e[seleccion].dui = -1;
+                    strcpy(e[seleccion].dui, "-1");
 
                     //Proceso de eliminar registro
                     for(int i = 0; i < indice; i++){
                         for(int j = 0; j < indice - 1; j++){
-                            if(e[j].dui == -1){
-                                auxdui = e[j].dui;
-                                e[j].dui = e[j+1].dui;
-                                e[j+1].dui = auxdui;
+                            if(strcmp(e[j].dui, "-1") == 0){
+                                strcpy(auxdui, e[j].dui);
+                                strcpy(e[j].dui, e[j+1].dui);
+                                strcpy(e[j+1].dui, auxdui);
 
                                 strcpy(auxNom, e[j].nom);
                                 strcpy(e[j].nom, e[j+1].nom);
@@ -895,7 +886,7 @@ void registroDescuentos(Empleados e[100], int indice) {
                 gotoxy(8,29);
                 cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Presiona [Enter] consecutivos si no desea realizar cambios."<<ANSI_COLOR_RESET;
                 gotoxy(10,9);
-                printf("%c Registro de descuentos / DUI: %d",254,e[seleccion].dui);
+                printf("%c Registro de descuentos / DUI: %s",254,e[seleccion].dui);
                 
                 cuadro(10,11,50,22);
         
@@ -1094,10 +1085,12 @@ int buscarEmpleados(char recep[50], Empleados e[100], int indice, char str1[25],
         }
     }else{
         for (int i = 0; i < indice; i++) {
-            if (Dui == e[i].dui) {
+            if (strcmp(e[i].dui, recep) == 0) {
                 id = i;
             }
+
         }
+        
 
         if(id == -2){
             if(Dui != 1 && indice > 0 && recep[0] != '\0'){
