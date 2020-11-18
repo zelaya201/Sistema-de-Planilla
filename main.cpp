@@ -510,7 +510,7 @@ void registroEmpleados_registrar(int& indice){
         }
 
     }while(centinela != 1);
-  
+
     gotoxy(20,21);
     mensaje += "Registrado correctamente.";
     cout<<ANSI_COLOR_GREEN<<mensaje<<ANSI_COLOR_RESET;
@@ -834,15 +834,12 @@ void registroEmpleados_delete(int& indice){
 }
 
 void registroDescuentos(int indice) {
-    int seleccion, DS, y, p, diasD, idMes; 
-    char recep[50], diasDC[2];  
-    char str1[25] = "descuentos", str2[25] = "Buscar empleado";
-    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-    char mesSelec[15] = "\0";
+    int seleccion, DS, y, p, diasD, idMes, centinela; 
+    char recep[50], diasDC[2], mesSelec[15] = "\0";
+    char str1[25] = "descuentos", str2[25] = "Buscar empleado", meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    int diasMeses[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     float salarioDia, descuentoRealizado;
-    string errores;
-    string mensaje;
-    int count = 0, validar;
+    string errores, mensaje;
 
     do {
         p = 0; 
@@ -861,138 +858,160 @@ void registroDescuentos(int indice) {
         gotoxy(28,12);
         cout<<"Buscar: ";
         gets(recep);
-        recep[0] = toupper(recep[0]);
-        DS = validar_numero(recep);
-        seleccion = buscarEmpleados(recep, indice, str1, str2, p, y);
+        recep[0] = toupper(recep[0]); //Eleva el primer caracter 
+        DS = validar_numero(recep); //Valida el dato ingresado
+        seleccion = buscarEmpleados(recep, indice, str1, str2, p, y); //Funcion buscar
         
         if (p == 2) {
-            do {
-                idMes = -2;
-                system("cls");
-                system("mode con: cols=120 lines=33");
-                diasD = 0;
-                y = 13;
-                errores = "\0";
-                mensaje = ANSI_COLOR_GREEN;
-                mensaje += "Descuentos realizados correctamente.";
-                mensaje += ANSI_COLOR_RESET;
-                validar = 0;
-                count = 0;
-                headerWithoutsquare();
-                cuadro(4,6,114,31);
-                cuadro(6,24,112,30);
-                gotoxy(8,25);
-                cout<<"Mensaje(s): ";
-                gotoxy(8,29);
-                cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Presiona [Enter] consecutivos si no desea realizar cambios."<<ANSI_COLOR_RESET;
-                gotoxy(10,9);
-                printf("%c Registro de descuentos / DUI: %s",254,e[seleccion].dui);
-                
-                cuadro(10,11,50,22);
-        
-                gotoxy(13,15);
-                cout<<"DUI";
-                gotoxy(13,16);
-                cout<<"Nombres";
-                gotoxy(13,17);
-                cout<<"Apellidos";
-                gotoxy(13,18);
-                cout<<"Cargo";
-                gotoxy(13,19);
-                cout<<"Salario";
+            idMes = -2;
+            system("cls");
+            system("mode con: cols=120 lines=33"); //Modifica el tamaño de la pantalla
+            diasD = 0;
+            y = 13;
 
-                gotoxy(18,13);
-                cout<<"Informacion del empleado";
-                cuadro(15,12,45,14);
+            headerWithoutsquare();
+            cuadro(4,6,114,31);
+            cuadro(6,24,112,30);
+            gotoxy(8,25);
+            cout<<"Mensaje(s): ";
+            gotoxy(8,29);
+            cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Dig\xA1ta [1] en cualquier campo para volver."<<ANSI_COLOR_RESET;
+            gotoxy(10,9);
+            printf("%c Registro de descuentos / DUI: %s",254,e[seleccion].dui);
+            
+            cuadro(10,11,50,22);
+    
+            gotoxy(13,15);
+            cout<<"DUI";
+            gotoxy(13,16);
+            cout<<"Nombres";
+            gotoxy(13,17);
+            cout<<"Apellidos";
+            gotoxy(13,18);
+            cout<<"Cargo";
+            gotoxy(13,19);
+            cout<<"Salario";
 
-                y++;
+            gotoxy(18,13);
+            cout<<"Informacion del empleado";
+            cuadro(15,12,45,14);
 
-                gotoxy(28,y+1);
-                cout<<e[seleccion].dui;
+            y++;
 
-                gotoxy(28,y+2);
-                cout<<e[seleccion].nom;
+            gotoxy(28,y+1);
+            cout<<e[seleccion].dui;
 
-                gotoxy(28,y+3);
-                cout<<e[seleccion].ape;
+            gotoxy(28,y+2);
+            cout<<e[seleccion].nom;
 
-                gotoxy(28,y+4);
-                cout<<e[seleccion].cargo;
+            gotoxy(28,y+3);
+            cout<<e[seleccion].ape;
 
-                gotoxy(28,y+5);
-                cout<<"$"<<e[seleccion].salario;
+            gotoxy(28,y+4);
+            cout<<e[seleccion].cargo;
 
-                salarioDia = e[seleccion].salario/22;
+            gotoxy(28,y+5);
+            cout<<"$"<<e[seleccion].salario;
+
+            /* Mes a evaluar */
+            do{
+                centinela = 1; //La variable se mantendra en 1 mientras no de error
+                cls(59, 55, y-2);
+
                 gotoxy(55,y-2);
-                cout<<"Escriba el mes a evaluar: ";
+                cout<<"Mes a evaluar: ";
                 gets(mesSelec);
-                mesSelec[0] = toupper(mesSelec[0]);
+                mesSelec[0] = toupper(mesSelec[0]); //Eleva el primer caracter obtenido
+
+                //Si digita uno regresa
+                if(strcmp(mesSelec, "1") == 0){
+                    goto salir;
+                }
 
                 for (int i = 0; i < 12; i++) {
                     if (strcmp(mesSelec, meses[i]) == 0) {
-                        idMes = i;
+                        idMes = i; //Obtiene la posicion del mes digitado
                     }
 
                     if (mesSelec[0] == '\0' || mesSelec[0] == ' ') {
-                        idMes = -1;
+                        idMes = -1; //Devuelve -1 si se encuentra con un salto de linea o espacio
                     }
                 }
 
-                if (validar_cadena(mesSelec) > 0 || idMes == -2) {
-                    errores += "\n\t\t";
-                    errores += ANSI_COLOR_RED;
-                    errores += "- Mes ingresado incorrecto.";
-                    errores += ANSI_COLOR_RESET;
-                }else if((validar_cadena(mesSelec) == '\0') && (validar_cadena(mesSelec) == ' ' && idMes == -1)){
-                    count++;
-                }
-                gotoxy(55,y-1);
-                cout<<"Escriba los dias a descontar: ";
-                gets(diasDC);
-                diasD = validar_numero(diasDC);
-                if (diasD == -1) {
-                    errores += "\n\t\t";
-                    errores += ANSI_COLOR_RED;
-                    errores += "- Datos invalidos en dias a descontar, ingrese solo numeros";
-                    errores += ANSI_COLOR_RESET;
-                }else if (diasD > 22 || diasD < 0) {
-                    errores += "\n\t\t";
-                    errores += ANSI_COLOR_RED;
-                    errores += "- Dias a descontar invalidos, debe estar en el intervalo de [1-22]";
-                    errores += ANSI_COLOR_RESET;
-                }else {
-                    count++;
-                }
-
-                if(errores != "\0"){
+                if (validar_cadena(mesSelec) > 0 || idMes == -2 && (validar_cadena(mesSelec) == '\0') || (validar_cadena(mesSelec) == ' ' || idMes == -1)) { //Validacion para mostrar error
+                    errores = "- Mes ingresado incorrecto.";
                     gotoxy(20,25);
-                    cout<<errores;
+                    cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
                     gotoxy(13,20);
                     cout<<ANSI_COLOR_RED<<"Descuento realizado: ninguno"<<ANSI_COLOR_RESET;
-                }else if(mensaje != "\0" && count != 2 && diasD != 0){ 
-                    e[seleccion].descuento[idMes] = salarioDia * diasD;
-                    gotoxy(13,20);
-                    cout<<fixed<<setprecision(2)<<ANSI_COLOR_GREEN<<"Descuento realizado: $"<<(float)e[seleccion].descuento[idMes]<<ANSI_COLOR_RESET;         
-                    gotoxy(20,25);
-                    cout<<mensaje;
-                    validar = 1;
-                }else {
-                    mensaje = ANSI_COLOR_YELLOWLIGTH;
-                    mensaje += "No se realiz\xA2 ning\xA3n descuento.";
-                    mensaje += ANSI_COLOR_RESET;
-                    gotoxy(20,25);
-                    cout<<mensaje;
-                    validar = 1;
+                    getch();
+                    cls(errores.length(), 20, 25);
+                    cls(28, 13, 20);
+                    centinela = 0; //Cambia la variable para mantener el ciclo do-while
                 }
-                getch();
-            }while (validar != 1);
+
+            }while(centinela != 1);
+
+            /* Dias a descontar */
+            do{
+                centinela = 1; //La variable se mantendra en 1 mientras no de error
+                cls(59, 55, y-1);
+                
+                gotoxy(55,y-1);
+                cout<<"Dias a descontar: ";
+                gets(diasDC);
+
+                //Si digita uno regresa
+                if(strcmp(diasDC, "1") == 0){
+                    goto salir;
+                }
+
+                diasD = validar_numero(diasDC); //Se valida el dato obtenido
+
+                if (diasD == -1 || diasD == 0) { //Condicion para mostrar error
+                    errores = "- Datos invalidos en dias a descontar, ingrese solo numeros";
+                    gotoxy(20,25);
+                    cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+                    gotoxy(13,20);
+                    cout<<ANSI_COLOR_RED<<"Descuento realizado: ninguno"<<ANSI_COLOR_RESET;
+                    getch();
+                    cls(errores.length(), 20, 25);
+                    cls(28, 13, 20);
+                    centinela = 0;
+                }else if (diasD > diasMeses[idMes] || diasD < 0) { //Condicion para mostrar error
+                    errores = "- Dias a descontar invalidos, debe estar en el intervalo de [1-";
+                    gotoxy(20,25);
+                    cout<<ANSI_COLOR_RED<<errores<<diasMeses[idMes]<<"]"<<ANSI_COLOR_RESET;
+                    gotoxy(13,20);
+                    cout<<ANSI_COLOR_RED<<"Descuento realizado: ninguno"<<ANSI_COLOR_RESET;
+                    getch();
+                    cls(errores.length()+5, 20, 25);
+                    cls(28, 13, 20);
+                    centinela = 0; //Cambia la variable para mantener el ciclo do-while
+                }
+                
+            }while(centinela != 1);
+
+            salarioDia = e[seleccion].salario/diasMeses[idMes]; //Se obtiene el salario diario dependiendo el mes evaluado
+
+            e[seleccion].descuento[idMes] = diasD * salarioDia; //Se realiza el descuento dependiendo los dias y el salario diario
+
+            gotoxy(13,20);
+            cout<<fixed<<setprecision(2)<<ANSI_COLOR_GREEN<<"Descuento realizado: $"<<(float)e[seleccion].descuento[idMes]<<ANSI_COLOR_RESET;         
+            gotoxy(20,25);
+            mensaje = "Descuentos realizados correctamente.";
+            cout<<ANSI_COLOR_GREEN<<mensaje<<ANSI_COLOR_RESET;
+
+            getch();
+            salir:
+            cout<<"";
             system("mode con: cols=120 lines=30");
         }
     }while (DS != 1);
 }
 
 int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], int& p, int& y) {
-    int seleccion, value;
+    int seleccion;
     int auxSeleccion = '\0';
     int Dui;
     bool exist;
@@ -1000,23 +1019,23 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
 
     int id = -2;
     y = 13;
-    Dui = validar_numero(recep);
+
+    Dui = validar_numero(recep); //Validacion del dato obtenido
 
     if (Dui == -1) {
-        if(validar_cadena(recep) > 0 || (recep[0] == '\0') || (recep[0] == ' ')){
+        if(validar_cadena(recep) > 0 || (recep[0] == '\0') || (recep[0] == ' ')){ //Condicion para mostrar error
             gotoxy(20,21);
             cout<<ANSI_COLOR_RED<<"Dato inv\xA0lido"<<ANSI_COLOR_RESET;
             getch();
         }else {
-            if(indice <= 0){
+            if(indice <= 0){ //Si no existe ningun empleado
                 gotoxy(20,21);
                 cout<<ANSI_COLOR_RED<<"No hay empleados registrados, por favor ingrese datos."<<ANSI_COLOR_RESET;
                 getch();
             }else {
-                exist = verificarEmpleado(recep, indice);
+                exist = verificarEmpleado(recep, indice); //Verifica si el dato obtenido existe en la lista de empleados
                 
-
-                if (!exist) {
+                if (!exist) { //En caso de no existir, muestra error
                     gotoxy(20,21);
                     cout<<ANSI_COLOR_RED<<"Empleado no encontrado."<<ANSI_COLOR_RESET;
                     getch();
@@ -1051,11 +1070,11 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
 
                         
                         if (exist) {
-                            mostrarEmpleados(recep, indice, pointer, y, c);
+                            mostrarEmpleados(recep, indice, pointer, y, c); //Muestra la lista de empleados segun el dato obtenido
                         }
                         
                         headerWithoutsquare();
-                        if(c > 7){
+                        if(c > 7){ //Si hay mas de 7 opciones, la pantalla se alarga
                             cuadro(4,6,114,21+c);
                         }else{
                             cuadro(4,6,114,28);
@@ -1064,9 +1083,10 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
                         char recepSeleccion[2];
                         gotoxy(10, y+3);
                         cout<<"Seleccione empleado o presione [Enter] para volver: ";
-                        gets(recepSeleccion);
+                        gets(recepSeleccion); //Se obtiene la seleccion
                         fflush(stdin);
-                        seleccion = validar_numero(recepSeleccion);
+                        seleccion = validar_numero(recepSeleccion); //Se valida la seleccion
+
                         if (seleccion != 0){
                             if (seleccion != -1 && seleccion <= c) {
                                 seleccion = pointer[seleccion-1];
@@ -1085,14 +1105,14 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
         }
     }else{
         for (int i = 0; i < indice; i++) {
-            if (strcmp(e[i].dui, recep) == 0) {
+            if (strcmp(e[i].dui, recep) == 0) { //Condicion para buscar el DUI segun el dato ingresado
                 id = i;
             }
 
         }
         
 
-        if(id == -2){
+        if(id == -2){ //Condicones para mostrar errores
             if(Dui != 1 && indice > 0 && recep[0] != '\0'){
                 gotoxy(20,21);
                 cout<<ANSI_COLOR_RED<<"No se encontr\xA2 ning\xA3n empleado con ese n\xA3mero de DUI"<<ANSI_COLOR_RESET;
@@ -1114,7 +1134,7 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
         }
     }             
 
-    return seleccion;
+    return seleccion; //Devuelve la seleccion
 }
 
 bool verificarEmpleado(char recep[50], int indice) {
@@ -1122,36 +1142,39 @@ bool verificarEmpleado(char recep[50], int indice) {
     char auxNom[50] = "\0", auxApe[50] = "\0", auxCargo[50] = "\0";
 
     for (int i = 0; i < indice; i++) {
+        /* COMPARACION DE NOMBRE */
         strcpy(auxNom, e[i].nom);
-        char *tokenNom = strtok(auxNom, " ");
+        char *tokenNom = strtok(auxNom, " "); //Se divide el nombre en palabras
         
         if(tokenNom != NULL){
             while(tokenNom != NULL){
-                if (strcmp(recep, tokenNom) == 0) {
+                if (strcmp(recep, tokenNom) == 0) { //Se comparan las palabras con el dato ingresado
                     exist = true;
                 }
-                tokenNom = strtok(NULL, " "); 
+                tokenNom = strtok(NULL, " "); //Se vacia el token
             }
         }
 
+        /* COMPARACION DE APELLIDOS */
         strcpy(auxApe, e[i].ape);
-        char *tokenApe = strtok(auxApe, " ");
+        char *tokenApe = strtok(auxApe, " "); //Se divide el apellido en palabras
         
         if(tokenApe != NULL){
             while(tokenApe != NULL){
-                if (strcmp(recep, tokenApe) == 0) {
+                if (strcmp(recep, tokenApe) == 0) { //Se comparan los apellidos con el dato ingresado
                     exist = true;
                 }
                 tokenApe = strtok(NULL, " "); 
             }
         }
 
+        /* COMPARACION DE CARGOS */
         strcpy(auxCargo, e[i].cargo);
-        char *tokenCargo = strtok(auxCargo, " ");
+        char *tokenCargo = strtok(auxCargo, " "); //Se divide el cargo en palabras
         
         if(tokenCargo != NULL){
             while(tokenCargo != NULL){
-                if (strcmp(recep, tokenCargo) == 0) {
+                if (strcmp(recep, tokenCargo) == 0) { //Se comparan el cargo con el dato ingresado
                     exist = true;
                 }
                 tokenCargo = strtok(NULL, " "); 
@@ -1159,7 +1182,7 @@ bool verificarEmpleado(char recep[50], int indice) {
         }
     }
 
-    return exist;
+    return exist; //Retorna un booleano, dependiendo si existe o no el empleado
 }
 
 void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x) {
@@ -1169,18 +1192,20 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
     a = 0;
     c = 0;
     y = 13;
+
     for (int i = 0; i < indice; i++) {
+        /* IMPRESION POR NOMBRE */
         strcpy(auxNom, e[i].nom);
         char *tokenNom = strtok(auxNom, " ");
         if(tokenNom != NULL){
             while(tokenNom != NULL){
-                if (strcmp(recep, tokenNom) == 0) {
+                if (strcmp(recep, tokenNom) == 0) { //Compara el dato ingresado con los nombres
                     y++;
 
                     gotoxy(11,y);
-                    pointer[c] = a+c;
+                    pointer[c] = a+c; //Se almacena en un vector la posicion de cada resultado
                     c++;
-                    cout<<(i+1)-(a--);
+                    cout<<(i+1)-(a--); //Calcula un correlativo de 1 a n resultados
                     
                     gotoxy(16,y);
                     cout<<e[i].dui;
@@ -1201,17 +1226,18 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
             }
         }
 
+        /* IMPRESION POR APELLIDOS */
         strcpy(auxApe, e[i].ape);
         char *tokenApe = strtok(auxApe, " ");
         if(tokenApe != NULL){
             while(tokenApe != NULL){
-                if (strcmp(recep, tokenApe) == 0) {
+                if (strcmp(recep, tokenApe) == 0) { //Compara el dato ingresado con los apellidos
                     y++;
 
                     gotoxy(11,y);
-                    pointer[c] = a+c;
+                    pointer[c] = a+c;  //Se almacena en un vector la posicion de cada resultado
                     c++;
-                    cout<<(i+1)-(a--);
+                    cout<<(i+1)-(a--); //Calcula un correlativo de 1 a n resultados
                     
                     gotoxy(16,y);
                     cout<<e[i].dui;
@@ -1232,17 +1258,18 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
             }
         }
         
+        /* IMPRESION POR CARGO */
         strcpy(auxCargo, e[i].cargo);
         char *tokenCargo = strtok(auxCargo, " ");
         if(tokenCargo != NULL){
             while(tokenCargo != NULL){
-                if (strcmp(recep, tokenCargo) == 0) {
+                if (strcmp(recep, tokenCargo) == 0) {  //Compara el dato ingresado con los cargos
                     y++;
 
                     gotoxy(11,y);
-                    pointer[c] = a+c;
+                    pointer[c] = a+c; //Se almacena en un vector la posicion de cada resultado
                     c++;
-                    cout<<(i+1)-(a--);
+                    cout<<(i+1)-(a--); //Calcula un correlativo de 1 a n resultados
                     
                     gotoxy(16,y);
                     cout<<e[i].dui;
@@ -1262,12 +1289,11 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
                 tokenCargo = strtok(NULL, " ");
             }
         }
-
         ++a;
     }
 
     if (c > 0) {
-        x = c;
+        x = c; //Devuelve la cantidad de resultados, solo si estos son mayores a 0
     }
 }
 
