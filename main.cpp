@@ -875,7 +875,7 @@ void registroDescuentos(int indice) {
             gotoxy(8,25);
             cout<<"Mensaje(s): ";
             gotoxy(8,29);
-            cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Dig\xA1ta [1] en cualquier campo para volver."<<ANSI_COLOR_RESET;
+            cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Dig\xA1ta [0] en cualquier campo para volver."<<ANSI_COLOR_RESET;
             gotoxy(10,9);
             printf("%c Registro de descuentos / DUI: %s",254,e[seleccion].dui);
             
@@ -924,7 +924,7 @@ void registroDescuentos(int indice) {
                 mesSelec[0] = toupper(mesSelec[0]); //Eleva el primer caracter obtenido
 
                 //Si digita uno regresa
-                if(strcmp(mesSelec, "1") == 0){
+                if(strcmp(mesSelec, "0") == 0){
                     goto salir;
                 }
 
@@ -962,7 +962,7 @@ void registroDescuentos(int indice) {
                 gets(diasDC);
 
                 //Si digita uno regresa
-                if(strcmp(diasDC, "1") == 0){
+                if(strcmp(diasDC, "0") == 0){
                     goto salir;
                 }
 
