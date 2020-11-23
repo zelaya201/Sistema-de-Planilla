@@ -799,6 +799,7 @@ void registroEmpleados_delete(int& indice){
                     }
 
                         validar = 1;
+                        seleccion = 0;//Para que no se salga del primer bucle
 
                         //Disminuir al indice
                         indice--;
@@ -824,8 +825,6 @@ void registroEmpleados_delete(int& indice){
                     getch();
                     
                 }
-
-                seleccion = 0;//Para que no se salga del primer bucle
 
             }while(validar != 1);
         }   
