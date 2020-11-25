@@ -20,23 +20,30 @@
 #include <math.h>
 #define row 100
 #define cols 50
-#define ANSI_COLOR_RED     "\x1b[91m"
+#define ANSI_COLOR_RED   "\x1b[91m"
 #define ANSI_COLOR_GREEN   "\x1b[92m"
 #define ANSI_COLOR_YELLOWLIGTH     "\x1b[93m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 using namespace std;
 
+struct planilla
+{
+    float afp;
+    float isss;
+    float descuentoHecho;
+    float Adescontar;
+    char mesSelec[20];
+};
 struct Empleados {
     char dui[10];
     char nom[50];
     char ape[50];
     char cargo[50];
     float salario;
-    float afp;
-    float isss;
     float descuento[12];
     float salarioN[12];
+    planilla pl;
 }e[100];
 
 void header(); //Diseño completo (Cabecera y cuadro del cuerpo)
@@ -59,7 +66,7 @@ void planillaMensual(int&);
 // void repDescuento(int mes /*  */);
 
 void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
-void menuMeses();
+int mesesM();
 
 int main(){
 
@@ -172,42 +179,26 @@ int menu(){// Mis opciones [3] y [4]
     opcion = validar_numero(opAux); //Validar opcion
 
     return opcion; 
-} // Menu para hacer uso
-// Modulo Julio Torres
-/* void menuMeses(){
-    gotoxy(43,3);
-    headerWithoutsquare();
-    cuadroPlanillas(4,6,153,28);
+}
+int mesesM()
+{
+    int opMes;
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-    int i = 12;
-    for (int x = 0; x < 1; x++)
-    {
-        for (int y = 0; y < 12; y++)
-        {
-            gotoxy(13, i + y);
-            cout << y + 1 << '.' << meses[y] << " ";
-            cout << endl;
+    gotoxy(10,9);
+    printf("%c Planilla Mensual / ",254);
+    // gotoxy(14,13);
+    printf("\n\n");
+        for (int k = 0; k < 12; k++){
+            cout << "\t\t"<<k + 1 << ". " << meses[k] << endl;
         }
-        // cout << endl;
-    }
-    
-    for (int me = 0; me < 12; me++)
-    {
-        if (strcmp(meses[me], correcto[me]) == 0)
-        {
-            cout << meses[me];
-        }
-        
-    } 
-    getch();
-} */
+        cout << "\t\tOpcion: ";cin >> opMes;
+        return opMes - 1;
+}
 void planillaMensual(int& indice)
 {
-    int y = 13,i = 12;
-    float AFP[100], isss[100]; // podria hacerse con estructura
+    int y = 13,i = 12, mesE;
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-    // cuadro(4,6,114,28);
-    system("mode con: cols=160 lines=30");
+    system("mode con: cols=165 lines=40");
     system("cls");
     gotoxy(43,3);
     cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
@@ -216,11 +207,14 @@ void planillaMensual(int& indice)
         }else{
             cuadroPlanillas(4,6,153,28);
         }
+        for(int u = 0; u < indice; u++){e[u].pl.descuentoHecho = e[u].descuento[u]; e[u].pl.Adescontar = e[u].salario;}
         cuadro(4,1,153,5);
+        mesE = mesesM();
         gotoxy(10,9);
-        printf("%c Planilla Mensual / Aqui el mes",254); // El mes elegido del menu
-    
-    getch();
+        printf("%c Planilla Mensual / ",254);
+        if(mesE < 0 || mesE > 12){cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cout<<ANSI_COLOR_RESET;getch(); // Limpiar la pantalla con los meses
+        }else{cout << meses[mesE];}
+        // for (int i = 12; i < 26; i++){cls(50, 10, i);} // Limpiar la pantalla con los meses
         gotoxy(12,12);
         cout<<"DUI";
         cuadro(8,11,20,13);
@@ -256,13 +250,15 @@ void planillaMensual(int& indice)
         gotoxy(140,12);
         cout<<"Salario N";
         cuadro(138,11,150,13);
-        if(indice <= 0){
+        for (int r = 0; r < 12; r++)
+        {
+            if (strcmp(e[i].pl.mesSelec, meses[r]) == 0){
+            if(indice <= 0){
             gotoxy(32,y+2);
             cout<<"No hay empleados registrados, por favor ingrese datos";
             getch();
-        }else{
+            }else{
             for(int i = 0; i < indice; i++){
-
                 y++;
 
                 gotoxy(10,y);
@@ -274,28 +270,31 @@ void planillaMensual(int& indice)
                 gotoxy(44,y);
                 cout<<e[i].ape;
                 
-
                 gotoxy(68,y);
                 cout<<e[i].cargo;
                 
-
-                gotoxy(88,y); // AFP
-                cout<<"$"<<e[i].salario;
+                gotoxy(89,y);
+                printf("$%g\n", e[i].pl.Adescontar);
                 
-                gotoxy(103,y);
-                e[i].afp = (e[i].salario*0.0725); // Aqui recibire el calculo del modulo de Walter!!
-                cout << "$" << setprecision(5) << e[i].afp;
-        
-                gotoxy(116,y);
-                e[i].isss = (e[i].salario*0.03); // Parte del modulo de Walter
-                cout << "$" << ceil(e[i].isss) << ".00";
+                /* gotoxy(103,y); // AFP
+                for(int p = 0;p<indice;p++){e[i].pl[p].afp = (e[i].salario*0.0725);} // Aqui recibire el calculo del modulo de Walter!!}
+                for(int p = 0;p<indice;p++){printf("$%g\n", e[i].pl[p].afp);}
 
-                gotoxy(127,y);
-                cout << "000.00";
-                /* Aqui el mostrar el modulo de Mario */
+                gotoxy(118,y); // ISSS
+                for(int p = 0;p<indice;p++){e[i].pl[p].isss = (e[i].salario*0.03);} // Parte del modulo de Walter
+                for(int p = 0;p<indice;p++){printf("$%g\n",ceil(e[i].pl[p].isss));} */
 
+                gotoxy(129,y);
+                    if(e[i].pl.descuentoHecho == 0){
+                        printf(" N / A \n");
+                    }else{
+                        printf("$%g\n", e[i].pl.descuentoHecho);
+                    }
+                
                 gotoxy(141, y);
                 cout << "000.00";
+                    }
+                }
             }
         }
     getch();
@@ -927,6 +926,7 @@ void registroDescuentos(int indice) {
                 for (int i = 0; i < 12; i++) {
                     if (strcmp(mesSelec, meses[i]) == 0) {
                         idMes = i; //Obtiene la posicion del mes digitado
+                        strcpy(e[i].pl.mesSelec, mesSelec);
                     }
 
                     if (mesSelec[0] == '\0' || mesSelec[0] == ' ') {
