@@ -27,14 +27,25 @@
 
 using namespace std;
 
+struct Retenciones {
+    float porAfp = 7.25;
+    float afp;
+    float porIsss = 3;
+    float isss;
+    float porRenta1 = 10;
+    float porRenta2 = 20;
+    float porRenta3 = 30;
+    float renta;
+    float sueldoDescuento;
+};
+
 struct Empleados {
     char dui[10];
     char nom[50];
     char ape[50];
     char cargo[50];
     float salario;
-    float afp;
-    float isss;
+    Retenciones r[100];
     float descuento[12];
     float salarioN[12];
 }e[100];
@@ -60,6 +71,9 @@ void planillaMensual(int&);
 
 void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
 void menuMeses();
+void registroRetenciones(int);
+void registroRetenciones_modificar(int);
+void registroRetenciones_historial(int);
 
 int main(){
 
@@ -127,7 +141,7 @@ int main(){
 
         switch(op){
             case 1: system("cls");registroEmpleados(indice);break; //Modulo 1
-            case 2: system("cls");cout<<"Modulo en proceso";break; //Modulo 2
+            case 2: system("cls");registroRetenciones(indice);break; //Modulo 2
             case 3: system("cls");planillaMensual(indice);break; //Modulo 3
             case 4: system("cls");cout<<"Modulo en proceso";break; //Modulo 4
             case 5: system("cls");registroDescuentos(indice);break; //Modulo 5
@@ -282,13 +296,13 @@ void planillaMensual(int& indice)
                 gotoxy(88,y); // AFP
                 cout<<"$"<<e[i].salario;
                 
-                gotoxy(103,y);
+                /* gotoxy(103,y);
                 e[i].afp = (e[i].salario*0.0725); // Aqui recibire el calculo del modulo de Walter!!
                 cout << "$" << setprecision(5) << e[i].afp;
         
                 gotoxy(116,y);
                 e[i].isss = (e[i].salario*0.03); // Parte del modulo de Walter
-                cout << "$" << ceil(e[i].isss) << ".00";
+                cout << "$" << ceil(e[i].isss) << ".00"; */
 
                 gotoxy(127,y);
                 cout << "000.00";
@@ -988,7 +1002,74 @@ void registroDescuentos(int indice) {
             }while (validar != 1);
             system("mode con: cols=120 lines=30");
         }
-    }while (DS != 1);
+    }while (DS != 1);   
+}
+
+void registroRetenciones(int indice) {
+    system("cls");
+    char select[2];
+    int op;
+
+    //Inicializacion de retenciones con porcentajes por defecto
+    for (int i = 0; i < indice; i++) {
+        e[i].r[i].afp = e[i].salario * (e[i].r[i].porAfp/100);
+            
+        if(e[i].salario >= 1000) {
+            e[i].r[i].isss = 30; 
+        }else {
+            e[i].r[i].isss = e[i].salario * (e[i].r[i].porIsss/100); 
+        }
+        
+        e[i].r[i].sueldoDescuento = e[i].salario - (e[i].r[i].afp +  e[i].r[i].isss);
+
+        if(e[i].r[i].sueldoDescuento < 472){
+            e[i].r[i].renta = 0;
+        }else if(e[i].r[i].sueldoDescuento < 895.24) {
+            e[i].r[i].renta = ((e[i].r[i].sueldoDescuento - 472) * (e[i].r[i].porRenta1/100)) + 17.67; 
+        }else if(e[i].r[i].sueldoDescuento < 2038.10) {
+            e[i].r[i].renta = ((e[i].r[i].sueldoDescuento - 895.24) * (e[i].r[i].porRenta2/100)) + 60; 
+        }else if(e[i].r[i].sueldoDescuento > 2038.11) {
+            e[i].r[i].renta = ((e[i].r[i].sueldoDescuento - 2038.10) * (e[i].r[i].porRenta3/100)) + 288.57;
+        }
+    }
+
+    do{
+        system("cls");
+        header();
+        gotoxy(10,9);
+        printf("%c Registro de retenciones de ley",254);
+        gotoxy(10,11);
+        cout<<"[1] Modificar porcentajes de descuento";
+        gotoxy(10,12);
+        cout<<"[2] Historial de modificaciones";
+        gotoxy(10,13);
+        cout<<"[3] Salir";
+        gotoxy(10,15);
+        cout<<"Selecciona: ";
+        gets(select);
+        fflush(stdin);
+
+        op = validar_numero(select);
+
+        //Submenu
+        switch(op){
+            case 1: system("cls"); registroRetenciones_modificar(indice); break;
+            case 2: system("cls"); registroRetenciones_historial(indice); break;
+            case 3: break;
+            default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
+        }
+
+    }while(op != 3);
+    
+   // getch();
+}
+
+void registroRetenciones_modificar(int indice){
+
+}
+
+void registroRetenciones_historial(int indice) {
+
 }
 
 int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], int& p, int& y) {
