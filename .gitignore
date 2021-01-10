@@ -1,1 +1,8 @@
+#Se ignoran los archivos .exe
 *.exe
+
+#Se ignoran el archivo temporal
+tempCodeRunnerFile.cpp
+
+#Se ignoran los directorios de vscode
+.vscode/

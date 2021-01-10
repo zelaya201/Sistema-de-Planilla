@@ -53,7 +53,9 @@ void registroEmpleados_edit(int &);//dui, e.e[i].nombre, apellidos, cargo, salar
 void registroEmpleados_delete(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
 void registroDescuentos(int);
 int buscarEmpleados(char[50], int, char[25], char[25], int&, int&);
-bool verificarEmpleado(char [50],int);
+bool verificarEmpleado(char [50],int, int&);
+void impresionBuscar(int&, int[], int&, int&, int);
+int verificarDoble(int);
 void mostrarEmpleados(char [50], int, int [], int&, int&);
 void planillaMensual(int&);
 // void repDescuento(int mes /*  */);
@@ -76,9 +78,9 @@ int main(){
     int indice = 9;
     char nom[row][cols] = {
         {"Josue Adonay"},
-        {"Walter Alejandro"},
-        {"Julio Antonio"},
-        {"Keneth Valerio"},
+        {"Antonio Alejandro"},
+        {"Vladimir Antonio"},
+        {"Carlos Valerio"},
         {"Mario Ernesto"},
         {"Shelsy Yamileth"},
         {"Karla Beatriz"},
@@ -87,15 +89,15 @@ int main(){
     };
 
     char ape[row][cols] = {
-        {"Aguilar Constanza"},
+        {"Ayala Ayala"},
         {"Morales Constanza"},
-        {"Torres Constanza"},
-        {"Ramirez Ramirez"},
-        {"Zelaya Constanza"},
-        {"Constanza Abarca"},
-        {"Aguilar Constanza"},
-        {"Vaquerano Constanza"},
-        {"Constanza Aguilar"}
+        {"Torres Torres"},
+        {"Asensio Gavidia"},
+        {"Zelaya Torres"},
+        {"Rodriguez Perez"},
+        {"Cruz Nulas"},
+        {"Martinez Guarnizo"},
+        {"Constanza Osorio"}
     };
 
     char cargo[row][cols] = {
@@ -825,7 +827,7 @@ void registroDescuentos(int indice) {
         recep[0] = toupper(recep[0]); //Eleva el primer caracter 
         DS = validar_numero(recep); //Valida el dato ingresado
         seleccion = buscarEmpleados(recep, indice, str1, str2, p, y); //Funcion buscar
-        
+
         if (p == 2) {
             idMes = -2;
             diasD = 0;
@@ -997,7 +999,7 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
                 cout<<ANSI_COLOR_RED<<"No hay empleados registrados, por favor ingrese datos."<<ANSI_COLOR_RESET;
                 getch();
             }else {
-                exist = verificarEmpleado(recep, indice); //Verifica si el dato obtenido existe en la lista de empleados
+                exist = verificarEmpleado(recep, indice, c); //Verifica si el dato obtenido existe en la lista de empleados
                 
                 if (!exist) { //En caso de no existir, muestra error
                     gotoxy(20,21);
@@ -1006,9 +1008,9 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
                 }else {
                     do {
 
-                        if (exist) {
+                        /* if (exist) {
                             mostrarEmpleados(recep, indice, pointer, y, c); //Obtenemos el valor de la cantidad de resultados
-                        }
+                        } */
  
                         ampliar_pantalla(c); //Alarga la pantalla y el cuadro
 
@@ -1099,9 +1101,11 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
     return seleccion; //Devuelve la seleccion
 }
 
-bool verificarEmpleado(char recep[50], int indice) {
+bool verificarEmpleado(char recep[50], int indice, int& c) {
     bool exist = false;
     char auxNom[50] = "\0", auxApe[50] = "\0", auxCargo[50] = "\0";
+
+    c = 0;
 
     for (int i = 0; i < indice; i++) {
         /* COMPARACION DE NOMBRE */
@@ -1109,9 +1113,10 @@ bool verificarEmpleado(char recep[50], int indice) {
         char *tokenNom = strtok(auxNom, " "); //Se divide el nombre en palabras
         
         if(tokenNom != NULL){
-            while(tokenNom != NULL){
+            while(tokenNom != NULL){ 
                 if (strcmp(recep, tokenNom) == 0) { //Se comparan las palabras con el dato ingresado
                     exist = true;
+                    c++;
                 }
                 tokenNom = strtok(NULL, " "); //Se vacia el token
             }
@@ -1125,6 +1130,7 @@ bool verificarEmpleado(char recep[50], int indice) {
             while(tokenApe != NULL){
                 if (strcmp(recep, tokenApe) == 0) { //Se comparan los apellidos con el dato ingresado
                     exist = true;
+                    c++;
                 }
                 tokenApe = strtok(NULL, " "); 
             }
@@ -1138,6 +1144,7 @@ bool verificarEmpleado(char recep[50], int indice) {
             while(tokenCargo != NULL){
                 if (strcmp(recep, tokenCargo) == 0) { //Se comparan el cargo con el dato ingresado
                     exist = true;
+                    c++;
                 }
                 tokenCargo = strtok(NULL, " "); 
             }
@@ -1148,7 +1155,7 @@ bool verificarEmpleado(char recep[50], int indice) {
 }
 
 void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x) {
-    int a, c;
+    int a, c, pos[indice], doble, j = 0, k;
     char auxNom[50] = "\0", auxApe[50] = "\0", auxCargo[50] = "\0";
 
     a = 0;
@@ -1162,59 +1169,37 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
         if(tokenNom != NULL){
             while(tokenNom != NULL){
                 if (strcmp(recep, tokenNom) == 0) { //Compara el dato ingresado con los nombres
-                    y++;
-
-                    gotoxy(11,y);
-                    pointer[c] = a+c; //Se almacena en un vector la posicion de cada resultado
-                    c++;
-                    cout<<(i+1)-(a--); //Calcula un correlativo de 1 a n resultados
-                    
-                    gotoxy(16,y);
-                    cout<<e[i].dui;
-
-                    gotoxy(28,y);
-                    cout<<e[i].nom;
-
-                    gotoxy(54,y);
-                    cout<<e[i].ape;
-
-                    gotoxy(80,y);
-                    cout<<e[i].cargo;
-                
-                    gotoxy(99,y);
-                    cout<<"$"<<fixed<<setprecision(2)<<e[i].salario;
+                    impresionBuscar(y, pointer, a, c, i);
                 }
-                tokenNom = strtok(NULL, " ");
-            }
+                tokenNom = strtok(NULL, " ");    
+            }    
         }
 
+        k = 0;
         /* IMPRESION POR APELLIDOS */
         strcpy(auxApe, e[i].ape);
         char *tokenApe = strtok(auxApe, " ");
         if(tokenApe != NULL){
             while(tokenApe != NULL){
                 if (strcmp(recep, tokenApe) == 0) { //Compara el dato ingresado con los apellidos
-                    y++;
-
-                    gotoxy(11,y);
-                    pointer[c] = a+c;  //Se almacena en un vector la posicion de cada resultado
-                    c++;
-                    cout<<(i+1)-(a--); //Calcula un correlativo de 1 a n resultados
+                    doble = verificarDoble(i);
                     
-                    gotoxy(16,y);
-                    cout<<e[i].dui;
+                    if (doble == 0) {
+                        impresionBuscar(y, pointer, a, c, i);
+                    }
 
-                    gotoxy(28,y);
-                    cout<<e[i].nom;
+                    if (k == 0) {
+                        if (doble == 1) {
+                            while (doble > 0) {
+                                impresionBuscar(y, pointer, a, c, i);
 
-                    gotoxy(54,y);
-                    cout<<e[i].ape;
-
-                    gotoxy(80,y);
-                    cout<<e[i].cargo;
-                
-                    gotoxy(99,y);
-                    cout<<"$"<<fixed<<setprecision(2)<<e[i].salario;
+                                doble--;
+                                k++;
+                            }
+                        }
+                    }
+                    
+                    
                 }
                 tokenApe = strtok(NULL, " ");
             }
@@ -1226,27 +1211,7 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
         if(tokenCargo != NULL){
             while(tokenCargo != NULL){
                 if (strcmp(recep, tokenCargo) == 0) {  //Compara el dato ingresado con los cargos
-                    y++;
-
-                    gotoxy(11,y);
-                    pointer[c] = a+c; //Se almacena en un vector la posicion de cada resultado
-                    c++;
-                    cout<<(i+1)-(a--); //Calcula un correlativo de 1 a n resultados
-                    
-                    gotoxy(16,y);
-                    cout<<e[i].dui;
-
-                    gotoxy(28,y);
-                    cout<<e[i].nom;
-
-                    gotoxy(54,y);
-                    cout<<e[i].ape;
-
-                    gotoxy(80,y);
-                    cout<<e[i].cargo;
-                
-                    gotoxy(99,y);
-                    cout<<"$"<<fixed<<setprecision(2)<<e[i].salario;
+                    impresionBuscar(y, pointer, a, c, i);
                 }
                 tokenCargo = strtok(NULL, " ");
             }
@@ -1257,6 +1222,54 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
     if (c > 0) {
         x = c; //Devuelve la cantidad de resultados, solo si estos son mayores a 0
     }
+}
+
+void impresionBuscar(int& y, int pointer[], int& a, int& c, int i) {
+    y++;
+
+    gotoxy(11,y);
+    pointer[c] = a+c; //Se almacena en un vector la posicion de cada resultado
+    c++;
+    cout<<(i+1)-(a--); //Calcula un correlativo de 1 a n resultados
+    
+    gotoxy(16,y);
+    cout<<e[i].dui;
+
+    gotoxy(28,y);
+    cout<<e[i].nom;
+
+    gotoxy(54,y);
+    cout<<e[i].ape;
+
+    gotoxy(80,y);
+    cout<<e[i].cargo;
+
+    gotoxy(99,y);
+    cout<<"$"<<fixed<<setprecision(2)<<e[i].salario;
+}
+
+int verificarDoble(int i) {
+    char auxApe[50] = "\0";
+    char apeP[2][15];
+    int doble = 0, j = 0;
+
+    strcpy(auxApe, e[i].ape);
+    char *tokenApe = strtok(auxApe, " ");
+
+    if (tokenApe != NULL) {
+        while (tokenApe != NULL) {
+            strcpy(apeP[j], tokenApe);
+            tokenApe = strtok(NULL, " ");
+            j++;
+        }
+
+    }
+
+    if (strcmp(apeP[1], apeP[0]) == 0) {
+        doble = 1;
+    }
+
+    return doble;
 }
 
 //alinear objetos-
