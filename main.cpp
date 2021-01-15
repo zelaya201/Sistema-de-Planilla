@@ -81,7 +81,7 @@ void menuMeses();
 void registroRetenciones(int);
 void registroRetenciones_modificar(int);
 void registroRetenciones_historial(int);
-void registroRetenciones_historial_detalles(int);
+void registroRetenciones_historial_detalles(int, int);
 void calculoRetenciones(int);
 
 /* DECLARACION DE VARIABLES GLOBALES */
@@ -1109,9 +1109,7 @@ void registroRetenciones_modificar(int indice){
             h[conteoModificaciones].p[conteoModificaciones].porAfp = h[conteoModificaciones-1].p[conteoModificaciones-1].porAfp;
             centinela = 1;
             conteo++;
-        }
-
-        if (afp != 0) {
+        }else if (afp != 0) {
             mAfp = 1;
             h[conteoModificaciones].p[conteoModificaciones].porAfp = afp;
             h[conteoModificaciones].accion[conteoModificaciones] += "AFP";
@@ -1140,9 +1138,7 @@ void registroRetenciones_modificar(int indice){
             h[conteoModificaciones].p[conteoModificaciones].porIsss = h[conteoModificaciones-1].p[conteoModificaciones-1].porIsss;
             centinela = 1;
             conteo++;
-        }
-
-        if (isss != 0) {
+        }else if (isss != 0) {
             mIsss = 1;
             h[conteoModificaciones].p[conteoModificaciones].porIsss = isss;
             if (mAfp == 1) {
@@ -1176,9 +1172,7 @@ void registroRetenciones_modificar(int indice){
             h[conteoModificaciones].p[conteoModificaciones].porRenta1 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta1;
             centinela = 1;
             conteo++;
-        }
-
-        if (renta1 != 0) {
+        }else if (renta1 != 0) {
             mRenta1 = 1;
             h[conteoModificaciones].p[conteoModificaciones].porRenta1 = renta1;
             if (mAfp == 1 || mIsss == 1) {
@@ -1212,9 +1206,7 @@ void registroRetenciones_modificar(int indice){
             h[conteoModificaciones].p[conteoModificaciones].porRenta2 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta2;
             centinela = 1;
             conteo++;
-        }
-
-        if (renta2 != 0) {
+        }else if (renta2 != 0) {
             mRenta2 = 1;
             h[conteoModificaciones].p[conteoModificaciones].porRenta2 = renta2;
             if (mAfp == 1 || mIsss == 1 || mRenta1 == 1) {
@@ -1248,9 +1240,7 @@ void registroRetenciones_modificar(int indice){
             h[conteoModificaciones].p[conteoModificaciones].porRenta3 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta3;
             centinela = 1;
             conteo++;
-        }
-
-        if (renta3 != 0) {
+        }else if (renta3 != 0) {
             h[conteoModificaciones].p[conteoModificaciones].porRenta3 = renta3;
             if (mAfp == 1 || mIsss == 1 || mRenta1 == 1 || mRenta2 == 1) {
                 h[conteoModificaciones].accion[conteoModificaciones] += ", Renta IV Tramo";
@@ -1348,19 +1338,24 @@ void registroRetenciones_historial(int indice) {
         }else {
             for (int i = 1; i < conteoModificaciones; i++) {
                 y++;
-                gotoxy(11,y);
-                cout<<i;
+                gotoxy(89,y);
+                if (h[i].estado == 1) {
+                    cout<<ANSI_COLOR_GREEN<<"Activo"<<ANSI_COLOR_RESET;
+                    gotoxy(11,y);
+                    cout<<"-";
+                }else {
+                    cout<<ANSI_COLOR_RED<<"Inactivo"<<ANSI_COLOR_RESET;
+                    gotoxy(11,y);
+                    cout<<i-1;
+                }
 
                 gotoxy(17,y);
                 cout<<h[i].accion[i];
 
-                gotoxy(89,y);
-                if (h[i].estado == 1) {
-                    cout<<ANSI_COLOR_GREEN<<"Activa"<<ANSI_COLOR_RESET;
-                }else {
-                    cout<<ANSI_COLOR_RED<<"Inactiva"<<ANSI_COLOR_RESET;
-                }
+                
             }
+            gotoxy(10,y+12);
+            cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" No puedes elegir una modificacion activa."<<ANSI_COLOR_RESET;
         }
 
         char recepSeleccion[2];
@@ -1369,49 +1364,174 @@ void registroRetenciones_historial(int indice) {
         gets(recepSeleccion); //Se obtiene la seleccion
         fflush(stdin);
         seleccion = validar_numero(recepSeleccion); //Se valida la seleccion
-
+        
         if (seleccion != 0){
-            /* if (h[seleccion].estado == 1) {
-                gotoxy(49,y+6);
+            if (h[seleccion+1].estado == 1) {
+                gotoxy(49,y+8);
                 cout<<ANSI_COLOR_YELLOWLIGTH <<"Modificacion actualmente activa";
-                cuadro(46,y+5,71,y+7);cout<<ANSI_COLOR_RESET;
+                cuadro(43,y+7,85,y+9);cout<<ANSI_COLOR_RESET;
                 getch();
-            }*/
-            
-            if (seleccion != -1 && seleccion <= conteoModificaciones) {
-                registroRetenciones_historial_detalles(seleccion);
+            }else if (seleccion+1 != -1 && seleccion+1 < conteoModificaciones) {
+                registroRetenciones_historial_detalles(seleccion+1, indice);
                 auxSeleccion = seleccion;
-                
             }else {
-                gotoxy(49,y+6);
+                gotoxy(49,y+8);
                 cout<<ANSI_COLOR_RED<<"Error: Dato inv\xA0lido";
-                cuadro(46,y+5,71,y+7);cout<<ANSI_COLOR_RESET;
+                cuadro(46,y+7,71,y+9);cout<<ANSI_COLOR_RESET;
                 getch();
             }
         }
     }while (auxSeleccion != seleccion);
-
 }
 
-void registroRetenciones_historial_detalles(int seleccion) {
-    system("mode con: cols=120 lines=30");
-    header();
-
-    gotoxy(10,9);
-    printf("%c Registro de retenciones de ley / Historial de modificaciones / Detalles",254);
-
-    gotoxy(10,11);
-    cout<<"Porcentajes modificados: "<<h[seleccion].accion[seleccion];
-
-    gotoxy(11,14);
-    printf("N%c", 167);
-    cuadro(10,13,55,15);
+void registroRetenciones_historial_detalles(int seleccion, int indice) {
+    char recep[2], recepM[2];
+    int op, validar, opM;
     
-    gotoxy(81,14);
-    cout<<"Estado de la modificacion";
-    cuadro(55,13,108,15);
+    do {
+        ampliar_pantalla(9);
 
-    getch();    
+        gotoxy(10,9);
+        printf("%c Registro de retenciones de ley / Historial de modificaciones / Detalles",254);
+
+        gotoxy(10,11);
+        cout<<"Porcentajes modificados: "<<h[seleccion].accion[seleccion];
+
+        gotoxy(22,14);
+        cout<<"Porcentajes a implementar";
+        cuadro(10,13,59,15);
+        
+        gotoxy(74,14);
+        cout<<"Porcentajes actuales";
+        cuadro(59,13,108,15);
+
+        gotoxy(24,16);
+        cout<<ANSI_COLOR_GREEN<<"+"<<ANSI_COLOR_RESET<<" AFP: "<<h[seleccion].p[seleccion].porAfp<<"%";
+
+        gotoxy(24,17);
+        cout<<ANSI_COLOR_GREEN<<"+"<<ANSI_COLOR_RESET<<" ISSS: "<<h[seleccion].p[seleccion].porIsss<<"%";
+
+        gotoxy(24,18);
+        cout<<ANSI_COLOR_GREEN<<"+"<<ANSI_COLOR_RESET<<" Renta II Tramo: "<<h[seleccion].p[seleccion].porRenta1<<"%";
+
+        gotoxy(24,19);
+        cout<<ANSI_COLOR_GREEN<<"+"<<ANSI_COLOR_RESET<<" Renta III Tramo: "<<h[seleccion].p[seleccion].porRenta2<<"%";
+
+        gotoxy(24,20);
+        cout<<ANSI_COLOR_GREEN<<"+"<<ANSI_COLOR_RESET<<" Renta IV Tramo: "<<h[seleccion].p[seleccion].porRenta3<<"%";
+
+        int y = 15;
+        for (int j = 0; j < 5; j++) {
+            y++;
+            gotoxy(55, y);
+            cout<<ANSI_COLOR_GREEN<<"--------->"<<ANSI_COLOR_RESET;
+        }
+
+        for (int i = 0; i < conteoModificaciones; i++) {
+            if (h[i].estado == 1) {
+                gotoxy(74,16);
+                cout<<ANSI_COLOR_RED<<"-"<<ANSI_COLOR_RESET<<" AFP: "<<h[i].p[i].porAfp<<"%";
+                gotoxy(74,17);
+                cout<<ANSI_COLOR_RED<<"-"<<ANSI_COLOR_RESET<<" ISSS: "<<h[i].p[i].porIsss<<"%";
+                gotoxy(74,18);
+                cout<<ANSI_COLOR_RED<<"-"<<ANSI_COLOR_RESET<<" Renta II Tramo: "<<h[i].p[i].porRenta1<<"%";
+                gotoxy(74,19);
+                cout<<ANSI_COLOR_RED<<"-"<<ANSI_COLOR_RESET<<" Renta III Tramo: "<<h[i].p[i].porRenta2<<"%";
+                gotoxy(74,20);
+                cout<<ANSI_COLOR_RED<<"-"<<ANSI_COLOR_RESET<<" Renta IV Tramo: "<<h[i].p[i].porRenta3<<"%";
+            }
+        }
+
+        gotoxy(10,23);
+        cout<<"[1] Implementar cambios - [2] Volver";
+        gotoxy(10,25);
+        cout<<"Digite: ";
+        gets(recep);
+
+        op = validar_numero(recep);
+
+        switch(op){
+            case 1: 
+                
+                do {
+                    system("cls");
+                    header();
+                    gotoxy(10,9);
+                    printf("%c Registro de retenciones de ley / Historial de modificaciones / Detalles / Implementar cambios",254);
+                    cuadro(18,11,99,25);
+                    gotoxy(41,12);
+                    cout<<"I m p l e m e n t a r  C a m b i o s";
+
+                    gotoxy(23,13);
+                    for(int i = 0; i < 71; i++){
+                        printf("%c",196);
+                    }
+                    
+                    printf("%c",196);
+                    gotoxy(33,14);
+                    printf("%cDeseas implementar estos cambios en los porcentajes?",168,160);
+                    gotoxy(30,16);
+                    cout<<"AFP: "<<h[seleccion].p[seleccion].porAfp<<" %";
+                    gotoxy(30,17);
+                    cout<<"ISSS: "<<h[seleccion].p[seleccion].porIsss<<" %";
+                    gotoxy(30,18);
+                    cout<<"Renta II Tramo: "<<h[seleccion].p[seleccion].porRenta1<<" %";
+                    gotoxy(30,19);
+                    cout<<"Renta III Tramo: "<<h[seleccion].p[seleccion].porRenta2<<" %";
+                    gotoxy(30,20);
+                    cout<<"Renta IV Tramo: "<<h[seleccion].p[seleccion].porRenta3<<" %";
+                    gotoxy(43,22);
+                    cout<<"[1] Aplicar - [2] Cancelar";
+
+                    //Crea una linea
+                    gotoxy(23,23);
+                    for(int i = 0; i < 71; i++){
+                        printf("%c",196);
+                    }
+
+                    gotoxy(53,24);
+                    cout<<"Digite: ";
+                    gets(recepM);
+
+                    opM = validar_numero(recepM);
+                
+                    cls(27, 43, 22);
+                    cls(71, 23, 23);
+                    cls(50, 43, 24);
+
+                    if (opM == 1) {
+                        h[seleccion].estado = 1;
+                        for (int i = 0; i < conteoModificaciones; i++) {
+                            if (i != seleccion) {
+                                h[i].estado = 0;
+                            }
+                        }
+
+                        validar = 1; //bandera para salir del bucle
+
+                        //Mensaje
+                        gotoxy(47,23); cout<<ANSI_COLOR_GREEN<<" (+) Cambios aplicados";
+                        cuadro(45,22,73,24); cout<<ANSI_COLOR_RESET;
+                        getch();
+                        registroRetenciones(indice);
+                    }else if (opM == 2){
+                        validar = 1;
+                        registroRetenciones_historial(indice);
+                    }else {
+                        validar = 0;
+
+                        //Mensaje
+                        gotoxy(47,23); cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";
+                        cuadro(44,22,73,24); cout<<ANSI_COLOR_RESET;
+                        getch();
+                    }
+                } while (validar != 1);
+                getch();
+                break;
+            case 2: system("cls"); registroRetenciones_historial(indice);break;
+            default: gotoxy(48,27);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,26,75,28);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
+        }
+    } while(op != 2);    
 }
 
 void calculoRetenciones(int indice) {
