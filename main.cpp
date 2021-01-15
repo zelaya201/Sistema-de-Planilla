@@ -1216,7 +1216,7 @@ void registroRetenciones_verPorcentajes(int indice) {
                             cuadro(45,22,73,24); cout<<ANSI_COLOR_RESET;
                             getch();
                             valid = 1;
-                            registroRetenciones(indice);
+                            op = 2;
                         }else if(rpo == 2){
                             valid = 1;
                         }else{                 
@@ -1730,10 +1730,10 @@ void registroRetenciones_historial_detalles(int seleccion, int indice) {
                         gotoxy(47,23); cout<<ANSI_COLOR_GREEN<<" (+) Cambios aplicados";
                         cuadro(45,22,73,24); cout<<ANSI_COLOR_RESET;
                         getch();
-                        registroRetenciones(indice);
+                        op = 2;
                     }else if (opM == 2){
                         validar = 1;
-                        registroRetenciones_historial(indice);
+                        op = 2;
                     }else {
                         validar = 0;
 
@@ -1743,7 +1743,7 @@ void registroRetenciones_historial_detalles(int seleccion, int indice) {
                         getch();
                     }
                 } while (validar != 1);
-                getch();
+                //getch();
                 break;
             case 2: system("cls"); registroRetenciones_historial(indice);break;
             default: gotoxy(48,27);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,26,75,28);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
