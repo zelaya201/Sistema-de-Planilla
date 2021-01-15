@@ -27,17 +27,19 @@
 
 using namespace std;
 
-struct Retenciones {
+struct porcentajeRetenciones {
     float porAfp = 7.25;
-    float afp;
     float porIsss = 3;
-    float isss;
     float porRenta1 = 10;
     float porRenta2 = 20;
     float porRenta3 = 30;
-    float renta;
-    float sueldoDescuento;
-};
+}porcentajes;
+
+struct Historial {
+    int estado = 1;
+    string accion[100] = {"Valores predeterminados"};
+    porcentajeRetenciones p[100];
+}h[100];
 
 struct Empleados {
     char dui[10];
@@ -45,9 +47,12 @@ struct Empleados {
     char ape[50];
     char cargo[50];
     float salario;
-    Retenciones r[100];
     float descuento[12];
     float salarioN[12];
+    float afp;
+    float isss;
+    float renta;
+    float salarioAfpIss;
 }e[100];
 
 void header(); //Diseño completo (Cabecera y cuadro del cuerpo)
@@ -76,6 +81,11 @@ void menuMeses();
 void registroRetenciones(int);
 void registroRetenciones_modificar(int);
 void registroRetenciones_historial(int);
+void registroRetenciones_historial_detalles(int);
+void calculoRetenciones(int);
+
+/* DECLARACION DE VARIABLES GLOBALES */
+int conteoModificaciones = 1;
 
 int main(){
 
@@ -136,6 +146,10 @@ int main(){
         strcpy(e[i].ape, ape[i]);
         strcpy(e[i].cargo, cargo[i]);
         e[i].salario = salario[i];
+    }
+
+    for (int i = 1; i < 100; i++) {
+        h[i].estado = 0;
     }
 
     do{
@@ -989,35 +1003,11 @@ void registroDescuentos(int indice) {
 }
 
 void registroRetenciones(int indice) {
-    system("cls");
     char select[2];
     int op;
 
-    //Inicializacion de retenciones con porcentajes por defecto
-    for (int i = 0; i < indice; i++) {
-        e[i].r[i].afp = e[i].salario * (e[i].r[i].porAfp/100);
-            
-        if(e[i].salario >= 1000) {
-            e[i].r[i].isss = 30; 
-        }else {
-            e[i].r[i].isss = e[i].salario * (e[i].r[i].porIsss/100); 
-        }
-        
-        e[i].r[i].sueldoDescuento = e[i].salario - (e[i].r[i].afp +  e[i].r[i].isss);
-
-        if(e[i].r[i].sueldoDescuento < 472){
-            e[i].r[i].renta = 0;
-        }else if(e[i].r[i].sueldoDescuento < 895.24) {
-            e[i].r[i].renta = ((e[i].r[i].sueldoDescuento - 472) * (e[i].r[i].porRenta1/100)) + 17.67; 
-        }else if(e[i].r[i].sueldoDescuento < 2038.10) {
-            e[i].r[i].renta = ((e[i].r[i].sueldoDescuento - 895.24) * (e[i].r[i].porRenta2/100)) + 60; 
-        }else if(e[i].r[i].sueldoDescuento > 2038.11) {
-            e[i].r[i].renta = ((e[i].r[i].sueldoDescuento - 2038.10) * (e[i].r[i].porRenta3/100)) + 288.57;
-        }
-    }
-
     do{
-        system("cls");
+        system("mode con: cols=120 lines=30");
         header();
         gotoxy(10,9);
         printf("%c Registro de retenciones de ley",254);
@@ -1026,8 +1016,10 @@ void registroRetenciones(int indice) {
         gotoxy(10,12);
         cout<<"[2] Historial de modificaciones";
         gotoxy(10,13);
-        cout<<"[3] Salir";
-        gotoxy(10,15);
+        cout<<"[3] Volver a porcentajes por defecto";
+        gotoxy(10,14);
+        cout<<"[4] Salir";
+        gotoxy(10,16);
         cout<<"Selecciona: ";
         gets(select);
         fflush(stdin);
@@ -1038,21 +1030,418 @@ void registroRetenciones(int indice) {
         switch(op){
             case 1: system("cls"); registroRetenciones_modificar(indice); break;
             case 2: system("cls"); registroRetenciones_historial(indice); break;
-            case 3: break;
+            case 3: /* system("cls"); registroRetenciones_predeterminado(); */ break;
+            case 4: break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
         }
 
-    }while(op != 3);
-    
-   // getch();
+    }while(op != 4);
 }
 
 void registroRetenciones_modificar(int indice){
+    char recepAfp[50], recepIsss[3], recepRenta1[3], recepRenta2[3], recepRenta3[3];
+    float afp, isss, renta1, renta2, renta3;
+    string errores, mensaje;
+    int conteo, centinela, auxConteo, mAfp = 0, mIsss = 0, mRenta1 = 0, mRenta2 = 0, mRenta3 = 0;
+    char *recepAux;
 
+    system("mode con: cols=120 lines=30");
+    header();
+
+    gotoxy(10,9);
+    printf("%c Modificar porcentaje de descuento / Modificar",254);
+    gotoxy(11,12);
+
+    cuadro(66,9,108,19);
+    cuadro(72,10,102,12);
+    gotoxy(78,11);
+    cout<<"Porcentajes Actuales";
+
+    for (int i = 0; i < conteoModificaciones; i++) {
+        if (h[i].estado == 1) {
+            for (int j = 13; j < 18; j++) {
+                cls(8,92,j);
+            } 
+            gotoxy(71,13);
+            cout<<"AFP";gotoxy(92, 13);cout<<h[i].p[i].porAfp<<"%";
+            gotoxy(71,14);
+            cout<<"ISSS";gotoxy(92, 14);cout<<h[i].p[i].porIsss<<"%";
+            gotoxy(71,15);
+            cout<<"Renta II Tramo";gotoxy(92, 15);cout<<h[i].p[i].porRenta1<<"%";
+            gotoxy(71,16);
+            cout<<"Renta III Tramo";gotoxy(92, 16);cout<<h[i].p[i].porRenta2<<"%";
+            gotoxy(71,17);
+            cout<<"Renta IV Tramo";gotoxy(92, 17);cout<<h[i].p[i].porRenta3<<"%";    
+        }
+    }
+    
+    cuadro(6,20,112,27);
+    gotoxy(8,21);
+    cout<<"Mensaje(s): ";
+    gotoxy(8,26);
+    cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Presiona [Enter] consecutivos si no desea realizar cambios."<<ANSI_COLOR_RESET;
+
+    conteo = 0;
+    mensaje = ANSI_COLOR_GREEN;
+    mensaje += "Cambios realizados correctamente.";
+    mensaje += ANSI_COLOR_RESET; 
+    
+    do{
+        centinela = 1;
+        
+        auxConteo = conteoModificaciones;
+
+        gotoxy(11,11);
+        cout<<"Nuevo porcentaje de AFP: ";
+        gets(recepAfp);
+
+        afp = strtod(recepAfp, &recepAux);
+        fflush(stdin);
+
+        if(((afp == 0) && (recepAfp[0] != '\0')) || recepAux[0] != '\0'){
+            errores = "- Nuevo porcentaje incorrecto.";
+            gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(errores.length(), 20, 21);
+            cls(strlen(recepAfp), 36, 11);
+            centinela = 0;
+        }else if(afp == 0){
+            h[conteoModificaciones].p[conteoModificaciones].porAfp = h[conteoModificaciones-1].p[conteoModificaciones-1].porAfp;
+            centinela = 1;
+            conteo++;
+        }
+
+        if (afp != 0) {
+            mAfp = 1;
+            h[conteoModificaciones].p[conteoModificaciones].porAfp = afp;
+            h[conteoModificaciones].accion[conteoModificaciones] += "AFP";
+            h[conteoModificaciones].estado = 1;
+        }
+    }while(centinela != 1);
+
+    do{
+        centinela = 1;
+
+        gotoxy(11,12);
+        cout<<"Nuevo porcentaje de ISSS: ";
+        gets(recepIsss);
+
+        isss = strtod(recepIsss, &recepAux);
+        fflush(stdin);
+
+        if(((isss == 0) && (recepIsss[0] != '\0')) || recepAux[0] != '\0'){
+            errores = "- Nuevo porcentaje incorrecto.";
+            gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(errores.length(), 20, 21);
+            cls(strlen(recepIsss), 37, 12); //Borra linea de la pantalla
+            centinela = 0;
+        }else if(isss == 0){
+            h[conteoModificaciones].p[conteoModificaciones].porIsss = h[conteoModificaciones-1].p[conteoModificaciones-1].porIsss;
+            centinela = 1;
+            conteo++;
+        }
+
+        if (isss != 0) {
+            mIsss = 1;
+            h[conteoModificaciones].p[conteoModificaciones].porIsss = isss;
+            if (mAfp == 1) {
+                h[conteoModificaciones].accion[conteoModificaciones] += ", ISSS";
+            }else {
+                h[conteoModificaciones].accion[conteoModificaciones] += "ISSS";
+            }
+            h[conteoModificaciones].estado = 1;
+        }
+    }while(centinela != 1);
+
+
+    do{
+        centinela = 1;
+
+        gotoxy(11,13);
+        cout<<"Nuevo porcentaje de Renta II Tramo: ";
+        gets(recepRenta1);
+
+        renta1 = strtod(recepRenta1, &recepAux);
+        fflush(stdin);
+
+        if(((renta1 == 0) && (recepRenta1[0] != '\0')) || recepAux[0] != '\0'){
+            errores = "- Nuevo porcentaje incorrecto.";
+            gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(errores.length(), 20, 21);
+            cls(strlen(recepRenta1), 47, 13); //Borra linea de la pantalla
+            centinela = 0;
+        }else if(renta1 == 0){
+            h[conteoModificaciones].p[conteoModificaciones].porRenta1 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta1;
+            centinela = 1;
+            conteo++;
+        }
+
+        if (renta1 != 0) {
+            mRenta1 = 1;
+            h[conteoModificaciones].p[conteoModificaciones].porRenta1 = renta1;
+            if (mAfp == 1 || mIsss == 1) {
+                h[conteoModificaciones].accion[conteoModificaciones] += ", Renta II Tramo";
+            }else {
+                h[conteoModificaciones].accion[conteoModificaciones] += "Renta II Tramo";
+            }
+            h[conteoModificaciones].estado = 1;
+        }
+
+    }while(centinela != 1);
+
+    do{
+        centinela = 1;
+
+        gotoxy(11,14);
+        cout<<"Nuevo porcentaje de Renta III Tramo: ";
+        gets(recepRenta2);
+
+        renta2 = strtod(recepRenta2, &recepAux);
+        fflush(stdin);
+
+        if(((renta2 == 0) && (recepRenta2[0] != '\0')) || recepAux[0] != '\0'){
+            errores = "- Nuevo porcentaje incorrecto.";
+            gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(errores.length(), 20, 21);
+            cls(strlen(recepRenta2), 48, 14); //Borra linea de la pantalla
+            centinela = 0;
+        }else if(renta2 == 0){
+            h[conteoModificaciones].p[conteoModificaciones].porRenta2 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta2;
+            centinela = 1;
+            conteo++;
+        }
+
+        if (renta2 != 0) {
+            mRenta2 = 1;
+            h[conteoModificaciones].p[conteoModificaciones].porRenta2 = renta2;
+            if (mAfp == 1 || mIsss == 1 || mRenta1 == 1) {
+                h[conteoModificaciones].accion[conteoModificaciones] += ", Renta III Tramo";
+            }else {
+                h[conteoModificaciones].accion[conteoModificaciones] += "Renta III Tramo";
+            }
+            h[conteoModificaciones].estado = 1;
+        }
+    }while(centinela != 1);    
+
+
+    do{
+        centinela = 1;
+
+        gotoxy(11,15);
+        cout<<"Nuevo porcentaje de Renta IV Tramo: ";
+        gets(recepRenta3);
+
+        renta3 = strtod(recepRenta3, &recepAux);
+        fflush(stdin);
+
+        if(((renta3 == 0) && (recepRenta3[0] != '\0')) || recepAux[0] != '\0'){
+            errores = "- Nuevo porcentaje incorrecto.";
+            gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
+            getch();
+            cls(errores.length(), 20, 21);
+            cls(strlen(recepRenta3), 47, 15); //Borra linea de la pantalla
+            centinela = 0;
+        }else if(renta3 == 0){
+            h[conteoModificaciones].p[conteoModificaciones].porRenta3 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta3;
+            centinela = 1;
+            conteo++;
+        }
+
+        if (renta3 != 0) {
+            h[conteoModificaciones].p[conteoModificaciones].porRenta3 = renta3;
+            if (mAfp == 1 || mIsss == 1 || mRenta1 == 1 || mRenta2 == 1) {
+                h[conteoModificaciones].accion[conteoModificaciones] += ", Renta IV Tramo";
+            }else {
+                h[conteoModificaciones].accion[conteoModificaciones] += "Renta IV Tramo";
+            }
+            h[conteoModificaciones].estado = 1;
+        }
+    }while(centinela != 1);
+
+    if (h[conteoModificaciones].estado == 1) {
+        for (int i = 0; i <= conteoModificaciones; i++){
+            if (i != conteoModificaciones) {
+                h[i].estado = 0;
+            }
+        } 
+    }
+
+    conteoModificaciones++;
+
+    if(conteo == 5){
+        mensaje = ANSI_COLOR_YELLOWLIGTH;
+        mensaje += "No se realiz\xA2 ning\xA3n cambio.";
+        mensaje += ANSI_COLOR_RESET;
+        conteoModificaciones = auxConteo;
+    }
+
+    //Mensaje
+    gotoxy(20,21); cout<<mensaje;     
+
+    getch();
 }
 
 void registroRetenciones_historial(int indice) {
+    int seleccion;
+    int auxSeleccion = '\0';
+    int y, pos;
+    string auxAccion;
+    int auxEstado;
+    float auxAfp, auxIsss, auxRenta1, auxRenta2, auxRenta3;
 
+    for (int i = 1; i < conteoModificaciones; i++) {
+        pos = i;
+        auxAccion = h[i].accion[i];
+        auxEstado = h[i].estado;
+        auxAfp = h[i].p[i].porAfp;
+        auxIsss = h[i].p[i].porIsss;
+        auxRenta1 = h[i].p[i].porRenta1;
+        auxRenta2 = h[i].p[i].porRenta2;
+        auxRenta3 = h[i].p[i].porRenta3;
+        
+        while (pos > 1 && auxEstado > h[pos-1].estado) {
+            h[pos].accion[pos] = h[pos-1].accion[pos-1];
+            h[pos].estado = h[pos-1].estado;
+            h[pos].p[pos].porAfp = h[pos-1].p[pos-1].porAfp;
+            h[pos].p[pos].porIsss = h[pos-1].p[pos-1].porIsss;
+            h[pos].p[pos].porRenta1 = h[pos-1].p[pos-1].porRenta1;
+            h[pos].p[pos].porRenta2 = h[pos-1].p[pos-1].porRenta2;
+            h[pos].p[pos].porRenta3 = h[pos-1].p[pos-1].porRenta3;
+            pos = pos-1;
+        }
+        h[pos].accion[pos] = auxAccion;
+        h[pos].estado = auxEstado;
+        h[pos].p[pos].porAfp = auxAfp;
+        h[pos].p[pos].porIsss = auxIsss;
+        h[pos].p[pos].porRenta1 = auxRenta1;
+        h[pos].p[pos].porRenta2 = auxRenta2;
+        h[pos].p[pos].porRenta3 = auxRenta3;
+    }
+        
+    do {
+        y = 13;
+
+        ampliar_pantalla(conteoModificaciones);
+        
+        gotoxy(10,9);
+        printf("%c Registro de retenciones de ley / Historial de modificaciones",254);
+
+        gotoxy(11,12);
+        printf("N%c", 167);
+        cuadro(8,11,15,13);
+
+        gotoxy(33, 12);
+        cout<<"Porcentajes modificados";
+        cuadro(15,11,96,13);
+
+        gotoxy(81,12);
+        cout<<"Estado de la modificacion";
+        cuadro(76,11,110,13);
+        
+        if (conteoModificaciones == 1) {
+            y++;
+            gotoxy(41,y);
+            cout<<"No se han realizado modificaciones"<<endl;
+        }else {
+            for (int i = 1; i < conteoModificaciones; i++) {
+                y++;
+                gotoxy(11,y);
+                cout<<i;
+
+                gotoxy(17,y);
+                cout<<h[i].accion[i];
+
+                gotoxy(89,y);
+                if (h[i].estado == 1) {
+                    cout<<ANSI_COLOR_GREEN<<"Activa"<<ANSI_COLOR_RESET;
+                }else {
+                    cout<<ANSI_COLOR_RED<<"Inactiva"<<ANSI_COLOR_RESET;
+                }
+            }
+        }
+
+        char recepSeleccion[2];
+        gotoxy(10, y+4);
+        cout<<"Seleccione una modificacion o presione [Enter] para volver: ";
+        gets(recepSeleccion); //Se obtiene la seleccion
+        fflush(stdin);
+        seleccion = validar_numero(recepSeleccion); //Se valida la seleccion
+
+        if (seleccion != 0){
+            /* if (h[seleccion].estado == 1) {
+                gotoxy(49,y+6);
+                cout<<ANSI_COLOR_YELLOWLIGTH <<"Modificacion actualmente activa";
+                cuadro(46,y+5,71,y+7);cout<<ANSI_COLOR_RESET;
+                getch();
+            }*/
+            
+            if (seleccion != -1 && seleccion <= conteoModificaciones) {
+                registroRetenciones_historial_detalles(seleccion);
+                auxSeleccion = seleccion;
+                
+            }else {
+                gotoxy(49,y+6);
+                cout<<ANSI_COLOR_RED<<"Error: Dato inv\xA0lido";
+                cuadro(46,y+5,71,y+7);cout<<ANSI_COLOR_RESET;
+                getch();
+            }
+        }
+    }while (auxSeleccion != seleccion);
+
+}
+
+void registroRetenciones_historial_detalles(int seleccion) {
+    system("mode con: cols=120 lines=30");
+    header();
+
+    gotoxy(10,9);
+    printf("%c Registro de retenciones de ley / Historial de modificaciones / Detalles",254);
+
+    gotoxy(10,11);
+    cout<<"Porcentajes modificados: "<<h[seleccion].accion[seleccion];
+
+    gotoxy(11,14);
+    printf("N%c", 167);
+    cuadro(10,13,55,15);
+    
+    gotoxy(81,14);
+    cout<<"Estado de la modificacion";
+    cuadro(55,13,108,15);
+
+    getch();    
+}
+
+void calculoRetenciones(int indice) {
+    /* Calculo de las retenciones de ley */
+    for (int j = 0; j < conteoModificaciones; j++) {
+        if (h[j].estado == 1) {
+            for (int i = 0; i < indice; i++) {
+                e[i].afp = e[i].salario * (h[j].p[j].porAfp/100); //Calculo de afp
+                    
+                if(e[i].salario >= 1000) {
+                    e[i].isss = 30; //Calculo de ISSS en mas de 1000
+                }else {
+                    e[i].isss = e[i].salario * (h[j].p[j].porIsss/100); //Calculo de ISSS
+                }
+                
+                e[i].salarioAfpIss = e[i].salario - (e[i].afp +  e[i].isss); //Sueldo - (AFP + ISSS) = Descuentos en el sueldo
+
+                //Calculo de renta
+                if(e[i].salarioAfpIss < 472){
+                    e[i].renta = 0;
+                }else if(e[i].salarioAfpIss < 895.24) {
+                    e[i].renta = ((e[i].salarioAfpIss - 472) * (h[j].p[j].porRenta1/100)) + 17.67; 
+                }else if(e[i].salarioAfpIss < 2038.10) {
+                    e[i].renta = ((e[i].salarioAfpIss - 895.24) * (h[j].p[j].porRenta2/100)) + 60; 
+                }else if(e[i].salarioAfpIss > 2038.11) {
+                    e[i].renta = ((e[i].salarioAfpIss - 2038.10) * (h[j].p[j].porRenta3/100)) + 288.57;
+                }
+            }
+        }
+    }
 }
 
 int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], int& p, int& y) {
