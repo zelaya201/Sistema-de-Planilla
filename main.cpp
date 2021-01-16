@@ -165,16 +165,13 @@ int main(){
             case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: M"<<"\xA2"<<"dulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
         }
-
-
     }while(op != 6);
 
     return 0;
 }
 
 int menu(){// Mis opciones [3] y [4]
-
-    char opAux[2];
+    char opAux[200];
     int opcion;
 
     system("cls");
@@ -191,8 +188,13 @@ int menu(){// Mis opciones [3] y [4]
 	
 	gotoxy(10,18); cout<<"Selecciona: ";
     gets(opAux);
-    fflush(stdin);
-    opcion = validar_numero(opAux); //Validar opcion
+
+    if (strlen(opAux) > 6) { //Si la seleccion recibe demasiados valores
+        opcion = -1;
+    }else {
+        fflush(stdin);
+        opcion = validar_numero(opAux); //Validar opcion
+    }
 
     return opcion; 
 } // Menu para hacer uso
@@ -327,8 +329,7 @@ void planillaMensual(int& indice)
 
 // Aqui inicia el modulo de Adonay @xdesprox
 void registroEmpleados(int& indice){
-
-    char select[2];
+    char select[200];
     int op;
 
     do{
@@ -342,8 +343,12 @@ void registroEmpleados(int& indice){
         gotoxy(10,16); cout<<"Selecciona: ";
         gets(select);
         fflush(stdin);
-
-        op = validar_numero(select);
+        
+        if (strlen(select) > 4){ //Si la seleccion recibe demasiados valores
+            op = -1;
+        }else {
+            op = validar_numero(select);
+        }
 
         //Submenu
         switch(op){
@@ -853,6 +858,7 @@ void registroDescuentos(int indice) {
         gotoxy(28,12);
         cout<<"Buscar: ";
         gets(recep);
+
         recep[0] = toupper(recep[0]); //Eleva el primer caracter 
         DS = validar_numero(recep); //Valida el dato ingresado
         seleccion = buscarEmpleados(recep, indice, str1, str2, p, y); //Funcion buscar
@@ -1004,8 +1010,8 @@ void registroDescuentos(int indice) {
 }
 
 void registroRetenciones(int indice) {
-    char select[2];
-    int op;
+    char select[200];
+    int op = 0;
 
     do{
         system("mode con: cols=120 lines=30");
@@ -1024,23 +1030,25 @@ void registroRetenciones(int indice) {
         cout<<"Selecciona: ";
         gets(select);
         fflush(stdin);
-
-        op = validar_numero(select);
+        if (strlen(select) > 4) { //Si la seleccion recibe demasiados valores
+            op = -1;
+        }else {
+            op = validar_numero(select); //Validacion del dato ingresado
+        }
 
         //Submenu
         switch(op){
             case 1: system("cls"); registroRetenciones_verPorcentajes(indice); break;
             case 2: system("cls"); registroRetenciones_modificar(indice); break;
             case 3: system("cls"); registroRetenciones_historial(indice); break;
-            case 4: break;
-            default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
+            case 4: op = 4; break;
+            default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();break;//Mensaje modulo no encontrado
         }
-
     }while(op != 4);
 }
 
 void registroRetenciones_verPorcentajes(int indice) {
-    char recep[2], retupor[10], slcpor[10];
+    char recep[200], retupor[200], slcpor[10];
     int op, rpo, spo, valid;
 
     system("mode con: cols=120 lines=30");
@@ -1154,7 +1162,11 @@ void registroRetenciones_verPorcentajes(int indice) {
             cout<<"Digite: ";
             gets(recep);
 
-            op = validar_numero(recep);
+            if (strlen(recep) > 2) { //Si la seleccion recibe demasiados valores
+                op = -1;
+            }else {
+                op = validar_numero(recep);
+            }
 
             switch(op) {
                 case 1: 
@@ -1199,7 +1211,11 @@ void registroRetenciones_verPorcentajes(int indice) {
                         cout<<"Digite: ";
                         gets(retupor);
 
-                        rpo = validar_numero(retupor);
+                        if (strlen(retupor) > 2) { //Si la seleccion recibe demasiados valores
+                            rpo = -1;
+                        }else {
+                            rpo = validar_numero(retupor);
+                        } 
 
                         cls(27, 43, 22);
                         cls(71, 23, 23);
@@ -1250,15 +1266,16 @@ void registroRetenciones_modificar(int indice){
     gotoxy(10,9);
     printf("%c Modificar porcentajes de retencion / Modificar",254);
     
-    cuadro(66,9,108,19);
-    cuadro(72,10,102,12);
+    cuadro(66,9,108,19); //Cuadro exterior de porcentajes
+    cuadro(72,10,102,12); //Cuadro interior
     gotoxy(78,11);
-    cout<<"Porcentajes Actuales";
+    cout<<"Porcentajes Activos";
 
+    /* IMPRESION DE PORCENTAJES ACTIVOS */
     for (int i = 0; i < conteoModificaciones; i++) {
         if (h[i].estado == 1) {
             for (int j = 13; j < 18; j++) {
-                cls(8,92,j);
+                cls(8,92,j); //Limpia un trozo de la pantalla
             } 
             gotoxy(71,13);
             cout<<"AFP";gotoxy(92, 13);cout<<h[i].p[i].porAfp<<"%";
@@ -1272,42 +1289,44 @@ void registroRetenciones_modificar(int indice){
             cout<<"Renta IV Tramo";gotoxy(92, 17);cout<<h[i].p[i].porRenta3<<"%";    
         }
     }
-    
-    cuadro(6,20,112,27);
+
+    cuadro(6,20,112,27); //Cuadro de mensajes
     gotoxy(8,21);
     cout<<"Mensaje(s): ";
     gotoxy(8,26);
     cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Presiona [Enter] consecutivos si no desea realizar cambios."<<ANSI_COLOR_RESET;
 
-    conteo = 0;
+    conteo = 0; //Variable para llevar el control de "Enters dados"
     mensaje = ANSI_COLOR_GREEN;
     mensaje += "Cambios realizados correctamente.";
     mensaje += ANSI_COLOR_RESET; 
     
     do{
-        centinela = 1;
+        centinela = 1; //Variable que controla el bucle de la captura de datos
         
-        auxConteo = conteoModificaciones;
+        auxConteo = conteoModificaciones; //Variable aux para el control de las modificaciones
 
         gotoxy(11,11);
         cout<<"Nuevo porcentaje de AFP: ";
-        gets(recepAfp);
+        gets(recepAfp); //Captura de dato
 
-        afp = strtod(recepAfp, &recepAux);
+        //Validacion del dato capturado
+        afp = strtod(recepAfp, &recepAux); //Devuelve 0 cuando se encuentran caracteres y un valores positivo cuando encuentra numeros
         fflush(stdin);
 
-        if(((afp == 0) && (recepAfp[0] != '\0')) || recepAux[0] != '\0' || afp > 100){
+        if(((afp <= 0) && (recepAfp[0] != '\0')) || recepAux[0] != '\0' || afp > 100){ 
             errores = "- Nuevo porcentaje incorrecto.";
             gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
             getch();
             cls(errores.length(), 20, 21);
-            cls(strlen(recepAfp), 36, 11);
+            cls(strlen(recepAfp), 36, 11);//Borra linea de la pantalla
             centinela = 0;
-        }else if(afp == 0){
+        }else if(afp == 0){ //En caso de dar enter, se mantienen los porcentajes actuales
             h[conteoModificaciones].p[conteoModificaciones].porAfp = h[conteoModificaciones-1].p[conteoModificaciones-1].porAfp;
             centinela = 1;
             conteo++;
         }else if (afp != 0) {
+            /* Se almacena el dato obtenido ya validado */
             mAfp = 1;
             h[conteoModificaciones].p[conteoModificaciones].porAfp = afp;
             h[conteoModificaciones].accion[conteoModificaciones] += "AFP";
@@ -1316,27 +1335,29 @@ void registroRetenciones_modificar(int indice){
     }while(centinela != 1);
 
     do{
-        centinela = 1;
+        centinela = 1; //Variable que controla el bucle de la captura de datos
 
         gotoxy(11,12);
         cout<<"Nuevo porcentaje de ISSS: ";
-        gets(recepIsss);
+        gets(recepIsss); //Captura de dato
 
-        isss = strtod(recepIsss, &recepAux);
+        //Validacion del dato capturado
+        isss = strtod(recepIsss, &recepAux); //Devuelve 0 cuando se encuentran caracteres y un valores positivo cuando encuentra numeros
         fflush(stdin);
 
-        if(((isss == 0) && (recepIsss[0] != '\0')) || recepAux[0] != '\0' || isss > 100){
+        if(((isss <= 0) && (recepIsss[0] != '\0')) || recepAux[0] != '\0' || isss > 100){
             errores = "- Nuevo porcentaje incorrecto.";
             gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
             getch();
             cls(errores.length(), 20, 21);
             cls(strlen(recepIsss), 37, 12); //Borra linea de la pantalla
             centinela = 0;
-        }else if(isss == 0){
+        }else if(isss == 0){ //En caso de dar enter, se mantienen los porcentajes actuales
             h[conteoModificaciones].p[conteoModificaciones].porIsss = h[conteoModificaciones-1].p[conteoModificaciones-1].porIsss;
             centinela = 1;
             conteo++;
         }else if (isss != 0) {
+            /* Se almacena el dato obtenido ya validado */
             mIsss = 1;
             h[conteoModificaciones].p[conteoModificaciones].porIsss = isss;
             if (mAfp == 1) {
@@ -1350,23 +1371,24 @@ void registroRetenciones_modificar(int indice){
 
 
     do{
-        centinela = 1;
+        centinela = 1; //Variable que controla el bucle de la captura de datos
 
         gotoxy(11,13);
         cout<<"Nuevo porcentaje de Renta II Tramo: ";
-        gets(recepRenta1);
+        gets(recepRenta1);//Captura de dato
 
-        renta1 = strtod(recepRenta1, &recepAux);
+        //Validacion del dato capturado
+        renta1 = strtod(recepRenta1, &recepAux); //Devuelve 0 cuando se encuentran caracteres y un valores positivo cuando encuentra numeros
         fflush(stdin);
 
-        if(((renta1 == 0) && (recepRenta1[0] != '\0')) || recepAux[0] != '\0' || renta1 > 100){
+        if(((renta1 <= 0) && (recepRenta1[0] != '\0')) || recepAux[0] != '\0' || renta1 > 100){
             errores = "- Nuevo porcentaje incorrecto.";
             gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
             getch();
             cls(errores.length(), 20, 21);
             cls(strlen(recepRenta1), 47, 13); //Borra linea de la pantalla
             centinela = 0;
-        }else if(renta1 == 0){
+        }else if(renta1 == 0){ //En caso de dar enter, se mantienen los porcentajes actuales
             h[conteoModificaciones].p[conteoModificaciones].porRenta1 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta1;
             centinela = 1;
             conteo++;
@@ -1390,17 +1412,17 @@ void registroRetenciones_modificar(int indice){
         cout<<"Nuevo porcentaje de Renta III Tramo: ";
         gets(recepRenta2);
 
-        renta2 = strtod(recepRenta2, &recepAux);
+        renta2 = strtod(recepRenta2, &recepAux); //Devuelve 0 cuando se encuentran caracteres y un valores positivo cuando encuentra numeros
         fflush(stdin);
 
-        if(((renta2 == 0) && (recepRenta2[0] != '\0')) || recepAux[0] != '\0' || renta2 > 100){
+        if(((renta2 <= 0) && (recepRenta2[0] != '\0')) || recepAux[0] != '\0' || renta2 > 100){
             errores = "- Nuevo porcentaje incorrecto.";
             gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
             getch();
             cls(errores.length(), 20, 21);
             cls(strlen(recepRenta2), 48, 14); //Borra linea de la pantalla
             centinela = 0;
-        }else if(renta2 == 0){
+        }else if(renta2 == 0){ //En caso de dar enter, se mantienen los porcentajes actuales
             h[conteoModificaciones].p[conteoModificaciones].porRenta2 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta2;
             centinela = 1;
             conteo++;
@@ -1424,17 +1446,17 @@ void registroRetenciones_modificar(int indice){
         cout<<"Nuevo porcentaje de Renta IV Tramo: ";
         gets(recepRenta3);
 
-        renta3 = strtod(recepRenta3, &recepAux);
+        renta3 = strtod(recepRenta3, &recepAux); //Devuelve 0 cuando se encuentran caracteres y un valores positivo cuando encuentra numeros
         fflush(stdin);
 
-        if(((renta3 == 0) && (recepRenta3[0] != '\0')) || recepAux[0] != '\0' || renta3 > 100){
+        if(((renta3 <= 0) && (recepRenta3[0] != '\0')) || recepAux[0] != '\0' || renta3 > 100){
             errores = "- Nuevo porcentaje incorrecto.";
             gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
             getch();
             cls(errores.length(), 20, 21);
             cls(strlen(recepRenta3), 47, 15); //Borra linea de la pantalla
             centinela = 0;
-        }else if(renta3 == 0){
+        }else if(renta3 == 0){ //En caso de dar enter, se mantienen los porcentajes actuales
             h[conteoModificaciones].p[conteoModificaciones].porRenta3 = h[conteoModificaciones-1].p[conteoModificaciones-1].porRenta3;
             centinela = 1;
             conteo++;
@@ -1479,6 +1501,7 @@ void registroRetenciones_historial(int indice) {
     string auxAccion;
     int auxEstado;
     float auxAfp, auxIsss, auxRenta1, auxRenta2, auxRenta3;
+    char recepSeleccion[200];
 
     for (int i = 1; i < conteoModificaciones; i++) {
         pos = i;
@@ -1512,7 +1535,12 @@ void registroRetenciones_historial(int indice) {
     do {
         y = 13;
 
-        ampliar_pantalla(conteoModificaciones);
+        if (conteoModificaciones >= 7) {
+            ampliar_pantalla(conteoModificaciones+12);
+        }else {
+            system("mode con: cols=120 lines=30");
+            header();
+        }
         
         gotoxy(10,9);
         printf("%c Registro de retenciones de ley / Historial de modificaciones",254);
@@ -1533,6 +1561,10 @@ void registroRetenciones_historial(int indice) {
             y++;
             gotoxy(41,y);
             cout<<"No se han realizado modificaciones"<<endl;
+            
+            gotoxy(10,y+4);
+            cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver\n";
+            getch();
         }else {
             for (int i = 1; i < conteoModificaciones; i++) {
                 y++;
@@ -1544,7 +1576,7 @@ void registroRetenciones_historial(int indice) {
                 }else {
                     cout<<ANSI_COLOR_RED<<"Inactivo"<<ANSI_COLOR_RESET;
                     gotoxy(11,y);
-                    if ((i-1) == 0) {
+                    if (h[1].estado == 0) {
                         cout<<i;
                     }else {
                         cout<<i-1;
@@ -1553,56 +1585,55 @@ void registroRetenciones_historial(int indice) {
                 gotoxy(17,y);
                 cout<<h[i].accion[i];
             }
-            gotoxy(10,y+6);
-            cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" No puedes elegir una modificacion activa."<<ANSI_COLOR_RESET;
-        }
-
-        char recepSeleccion[2];
-        gotoxy(10, y+4);
-        cout<<"Seleccione una modificacion o presione [Enter] para volver: ";
-        gets(recepSeleccion); //Se obtiene la seleccion
-        fflush(stdin);
-        seleccion = validar_numero(recepSeleccion); //Se valida la seleccion
-        
-        /* for (int i = 1; i < conteoModificaciones; i++) {
-            if (h[i].estado == 0) {
-                bSeleccion = 1;
-            }else {
-                bSeleccion = 0;
-            }
-        }
-
-        if (bSeleccion == 0) {
-            seleccion += 1;
-        } */
-
-        if (h[1].estado == 1){
-            if (seleccion != 0) {
-                seleccion = seleccion + 1;
-            }
-        }
-        
-        if (seleccion != 0){
-            if (h[seleccion].estado == 1) {
-                gotoxy(49,y+10);
-                cout<<ANSI_COLOR_YELLOWLIGTH <<"Modificacion actualmente activa";
-                cuadro(43,y+9,85,y+11);cout<<ANSI_COLOR_RESET;
+            
+            if (conteoModificaciones == 2 && h[0].estado == 0) {
+                gotoxy(10,y+6);
+                cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" No puedes elegir una modificacion activa. Presione [Enter] si desea volver"<<ANSI_COLOR_RESET;
                 getch();
-            }else if (seleccion != -1 && seleccion < conteoModificaciones) {
-                registroRetenciones_historial_detalles(seleccion, indice);
-                auxSeleccion = seleccion;
             }else {
-                gotoxy(49,y+10);
-                cout<<ANSI_COLOR_RED<<"Error: Dato inv\xA0lido";
-                cuadro(46,y+9,71,y+11);cout<<ANSI_COLOR_RESET;
-                getch();
+                gotoxy(10,y+4);
+                cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" No puedes elegir una modificacion activa."<<ANSI_COLOR_RESET;
+                gotoxy(10, y+2);
+                cout<<"Seleccione una modificacion o presione [Enter] para volver: ";
+                gets(recepSeleccion); //Se obtiene la seleccion
+                fflush(stdin);
+
+                //Se valida la seleccion
+                if (strlen(recepSeleccion) > conteoModificaciones || strlen(recepSeleccion) < 0) { //Si la seleccion recibe demasiados valores
+                    seleccion = -1;  
+                }else {
+                    seleccion = validar_numero(recepSeleccion);
+                }
+
+                if (h[1].estado == 1){
+                    if (seleccion != 0 && seleccion != -1) {
+                        seleccion = seleccion + 1;
+                    }
+                }
+                
+                if (seleccion != 0){
+                    if (h[seleccion].estado == 1) {
+                        gotoxy(49,y+8);
+                        cout<<ANSI_COLOR_YELLOWLIGTH <<"Modificacion actualmente activa";
+                        cuadro(43,y+7,85,y+9);cout<<ANSI_COLOR_RESET;
+                        getch();
+                    }else if (seleccion != -1 && seleccion < conteoModificaciones) {
+                        registroRetenciones_historial_detalles(seleccion, indice);
+                        auxSeleccion = seleccion;
+                    }else {
+                        gotoxy(49,y+7);
+                        cout<<ANSI_COLOR_RED<<"Error: Dato inv\xA0lido";
+                        cuadro(46,y+6,71,y+8);cout<<ANSI_COLOR_RESET;
+                        getch();
+                    }
+                }
             }
         }
-    }while (auxSeleccion != seleccion);
+    }while (seleccion != auxSeleccion);
 }
 
 void registroRetenciones_historial_detalles(int seleccion, int indice) {
-    char recep[2], recepM[2];
+    char recep[200], recepM[200];
     int op, validar, opM;
     
     do {
@@ -1665,7 +1696,11 @@ void registroRetenciones_historial_detalles(int seleccion, int indice) {
         cout<<"Digite: ";
         gets(recep);
 
-        op = validar_numero(recep);
+        if (strlen(recep) > 2) { //Si la seleccion recibe demasiados valores
+            op = -1;
+        }else {
+            op = validar_numero(recep);
+        }
 
         switch(op){
             case 1: 
@@ -1710,7 +1745,11 @@ void registroRetenciones_historial_detalles(int seleccion, int indice) {
                     cout<<"Digite: ";
                     gets(recepM);
 
-                    opM = validar_numero(recepM);
+                    if (strlen(recepM) > 2) { //Si la seleccion recibe demasiados valores
+                        opM = -1;
+                    }else {
+                        opM = validar_numero(recepM);
+                    }
                 
                     cls(27, 43, 22);
                     cls(71, 23, 23);
@@ -1733,7 +1772,6 @@ void registroRetenciones_historial_detalles(int seleccion, int indice) {
                         op = 2;
                     }else if (opM == 2){
                         validar = 1;
-                        op = 2;
                     }else {
                         validar = 0;
 
@@ -1856,7 +1894,11 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
                         cout<<"Seleccione empleado o presione [Enter] para volver: ";
                         gets(recepSeleccion); //Se obtiene la seleccion
                         fflush(stdin);
-                        seleccion = validar_numero(recepSeleccion); //Se valida la seleccion
+                        if (strlen(recepSeleccion) > c) {
+                            seleccion = -1;
+                        }else {
+                            seleccion = validar_numero(recepSeleccion); //Se valida la seleccion
+                        }
 
                         if (seleccion != 0){
                             if (seleccion != -1 && seleccion <= c) {
