@@ -31,9 +31,7 @@ struct planilla
 {
     float afp;
     float isss;
-    float descuentoHecho;
     float Adescontar;
-    char mesSelec[20];
 };
 struct Empleados {
     char dui[10];
@@ -43,6 +41,7 @@ struct Empleados {
     float salario;
     float descuento[12];
     float salarioN[12];
+    char mesEmpleado[50];
     planilla pl;
 }e[100];
 
@@ -63,7 +62,9 @@ int buscarEmpleados(char[50], int, char[25], char[25], int&, int&);
 bool verificarEmpleado(char [50],int);
 void mostrarEmpleados(char [50], int, int [], int&, int&);
 void planillaMensual(int&);
-// void repDescuento(int mes /*  */);
+void mostrarEmpleadoPlanilla(char recep[50], int indice, int [], int& p, int& y);
+void BuscarEmpleadoPlanilla(char recep[50], int indice, char [50], char[50], int&, int&);
+bool verificarMes(char[50], int);
 
 void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
 int mesesM();
@@ -109,7 +110,7 @@ int main(){
         {"Programador"},
         {"DBA"},
         {"Analista"},
-        {"Redes"},
+        {"DBA"},
         {"Ingeniero"},
         {"Servicio Social"},
         {"Disenador Grafico"},
@@ -136,7 +137,7 @@ int main(){
             case 1: system("cls");registroEmpleados(indice);break; //Modulo 1
             case 2: system("cls");cout<<"Modulo en proceso";break; //Modulo 2
             case 3: system("cls");planillaMensual(indice);break; //Modulo 3
-            case 4: system("cls");cout<<"Modulo en proceso";break; //Modulo 4
+            case 4: system("cls");cout<<"Modulo en proceso";break; //Modulo 3.1
             case 5: system("cls");registroDescuentos(indice);break; //Modulo 5
             case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: M"<<"\xA2"<<"dulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
@@ -180,126 +181,271 @@ int menu(){// Mis opciones [3] y [4]
 
     return opcion; 
 }
-int mesesM()
-{
-    int opMes;
+
+void planillaMensual(int& indice){
+    int y, p;
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-    gotoxy(10,9);
-    printf("%c Planilla Mensual / ",254);
-    // gotoxy(14,13);
-    printf("\n\n");
-        for (int k = 0; k < 12; k++){
-            cout << "\t\t"<<k + 1 << ". " << meses[k] << endl;
-        }
-        cout << "\t\tOpcion: ";cin >> opMes;
-        return opMes - 1;
-}
-void planillaMensual(int& indice)
-{
-    int y = 13,i = 12, mesE;
-    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-    system("mode con: cols=165 lines=40");
-    system("cls");
-    gotoxy(43,3);
+    int MesSeleccion, centinel, PL;
+    char recep[50];
+    char str[50] = "Planilla Mensual", str2[80] = "Planilla Quincenal";
+    // system("mode con: cols=120 lines=31");
+
+    gotoxy(29,3);
     cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
-        if(indice > 9){
-            cuadroPlanillas(4,6,153,20+indice);
-        }else{
-            cuadroPlanillas(4,6,153,28);
-        }
-        for(int u = 0; u < indice; u++){e[u].pl.descuentoHecho = e[u].descuento[u]; e[u].pl.Adescontar = e[u].salario;}
-        cuadro(4,1,153,5);
-        mesE = mesesM();
-        gotoxy(10,9);
-        printf("%c Planilla Mensual / ",254);
-        if(mesE < 0 || mesE > 12){cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cout<<ANSI_COLOR_RESET;getch(); // Limpiar la pantalla con los meses
-        }else{cout << meses[mesE];}
-        // for (int i = 12; i < 26; i++){cls(50, 10, i);} // Limpiar la pantalla con los meses
-        gotoxy(12,12);
-        cout<<"DUI";
-        cuadro(8,11,20,13);
+        do{
+            p = 0;
+            system("cls");
+            header();
+            cuadro(6,20,112,27);
+            gotoxy(8, 21);
+            cout<<"Mensaje(s): ";
+            gotoxy(8,23);
+            cout<<"Nota: "<<ANSI_COLOR_YELLOWLIGTH<<" Digita [1] para volver."<<ANSI_COLOR_RESET;
+            gotoxy(10,9);
+            printf("%c Planilla Mensual / ... ",254);
+            gotoxy(30, 14);
+            cout<<"Indicaci\xA2n: Escriba el mes a buscar";
+            cuadro(26,11,90,13);
+            gotoxy(28,12);
+            cout<<"Buscar: ";
+            fflush(stdin);
+            gets(recep);
+            recep[0] = toupper(recep[0]);
+            PL = validar_numero(recep);
+            BuscarEmpleadoPlanilla(recep, indice, str, str2, p, y);
+            
+        } while (PL != 1);
+}
+void BuscarEmpleadoPlanilla(char recep[50], int indice, char str[50], char str2[50], int& p, int& y){
+    int seleccion;
+    int auxSeleccion = '\0';
+    int mes;
+    bool exist;
+    int pointer[indice], a;
+    y = 13;
+    int idM = -2;
 
-        gotoxy(27,12);
-        cout<<"Nombre";
-        cuadro(20,11,42,13);
+    mes = validar_numero(recep);
 
-        gotoxy(48,12);
-        cout<<"Apellidos";
-        cuadro(42,11,66,13);
-
-        gotoxy(71,12);
-        cout<<"Cargo";
-        cuadro(66,11,86,13);
-
-        gotoxy(89,12);
-        cout<<"Salario";
-        cuadro(86,11,99,13);
-        
-        gotoxy(104,12);
-        cout<<"AFP";
-        cuadro(99,11,112,13);
-        
-        gotoxy(116,12);
-        cout<<"ISSS";
-        cuadro(112,11,125,13);
-        
-        gotoxy(127,12);
-        cout<<"Descuentos";
-        cuadro(125,11,138,13);
-
-        gotoxy(140,12);
-        cout<<"Salario N";
-        cuadro(138,11,150,13);
-        for (int r = 0; r < 12; r++)
-        {
-            if (strcmp(e[i].pl.mesSelec, meses[r]) == 0){
-            if(indice <= 0){
-            gotoxy(32,y+2);
-            cout<<"No hay empleados registrados, por favor ingrese datos";
+    if (mes == -1){
+        if (validar_cadena(recep) > 0 || (recep[0] == '\0') || (recep[0] == ' ')){
+            gotoxy(20,21);
+            cout << ANSI_COLOR_RED<<"Dato Incorrecto"<<ANSI_COLOR_RESET;
             getch();
+        }else{
+            if (indice <= 0){
+                gotoxy(20,21);
+                cout<<ANSI_COLOR_RED<<"No hay empleados registrados."<<ANSI_COLOR_RESET;
+                getch();
             }else{
-            for(int i = 0; i < indice; i++){
-                y++;
+                exist = verificarMes(recep, indice);
 
-                gotoxy(10,y);
-                cout<<e[i].dui;
+                if(!exist){
+                    gotoxy(20,21);
+                    cout<<ANSI_COLOR_RED<<"Empleados no econtrados en este mes."<<ANSI_COLOR_RESET;
+                    getch();
+                }else{
+                    do{
+                        system("mode con: cols=167 lines=30");
+                        
+                        system("cls");
+                        gotoxy(10, 9);
+                        printf("%c Planilla Mensual / %s",254, recep);
 
-                gotoxy(22,y);
-                cout<<e[i].nom;
-                
-                gotoxy(44,y);
-                cout<<e[i].ape;
-                
-                gotoxy(68,y);
-                cout<<e[i].cargo;
-                
-                gotoxy(89,y);
-                printf("$%g\n", e[i].pl.Adescontar);
-                
-                /* gotoxy(103,y); // AFP
-                for(int p = 0;p<indice;p++){e[i].pl[p].afp = (e[i].salario*0.0725);} // Aqui recibire el calculo del modulo de Walter!!}
-                for(int p = 0;p<indice;p++){printf("$%g\n", e[i].pl[p].afp);}
+                        gotoxy(12,12);
+                        cout<<"DUI";
+                        cuadro(8,11,20,13);
 
-                gotoxy(118,y); // ISSS
-                for(int p = 0;p<indice;p++){e[i].pl[p].isss = (e[i].salario*0.03);} // Parte del modulo de Walter
-                for(int p = 0;p<indice;p++){printf("$%g\n",ceil(e[i].pl[p].isss));} */
+                        gotoxy(27,12);
+                        cout<<"Nombre";
+                        cuadro(20,11,42,13);
 
-                gotoxy(129,y);
-                    if(e[i].pl.descuentoHecho == 0){
-                        printf(" N / A \n");
-                    }else{
-                        printf("$%g\n", e[i].pl.descuentoHecho);
-                    }
-                
-                gotoxy(141, y);
-                cout << "000.00";
-                    }
+                        gotoxy(48,12);
+                        cout<<"Apellidos";
+                        cuadro(42,11,66,13);
+
+                        gotoxy(71,12);
+                        cout<<"Cargo";
+                        cuadro(66,11,86,13);
+
+                        gotoxy(89,12);
+                        cout<<"Salario";
+                        cuadro(86,11,99,13);
+                        
+                        gotoxy(104,12);
+                        cout<<"AFP";
+                        cuadro(99,11,112,13);
+                        
+                        gotoxy(116,12);
+                        cout<<"ISSS";
+                        cuadro(112,11,125,13);
+
+                        gotoxy(127, 12);
+                        cout<<"RENTA";
+                        cuadro(125,11,136,13);
+                        
+                        gotoxy(138,12);
+                        cout<<"Descuentos";
+                        cuadro(136,11,150,13);
+
+                        gotoxy(151,12);
+                        cout<<"Salario N";
+                        cuadro(150,11,161,13);
+
+                        if (exist) {
+                            gotoxy(56,3);
+                            cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+                            if(indice > 6){
+                                cuadroPlanillas(4,6,165,20+indice);
+                            }else{
+                                cuadroPlanillas(4,6,155,28);
+                            }
+                            cuadro(4,1,165,5);
+                            mostrarEmpleadoPlanilla(recep, indice, pointer, y, a);
+                        char Releccion[2];
+                        gotoxy(10, y+3);
+                        cout<< "Presione [Enter] para volver: ";
+                        fflush(stdin);
+                        gets(Releccion);
+                        fflush(stdin);
+                        seleccion = validar_numero(Releccion);
+
+                        if (seleccion != 0){
+                            if (seleccion != -1 && seleccion <= a){
+                                seleccion = pointer[seleccion-1];
+                                auxSeleccion = seleccion;
+                                // p = 2;
+                            }else{
+                                gotoxy(49,y+6);
+                                cout<<ANSI_COLOR_RED<<"Error: Dato inv\xA0lido";
+                                cuadro(46,y+5,71,y+7);cout<<ANSI_COLOR_RESET;
+                                getch();
+                            }
+                        }
+                        }
+                        
+
+                        
+                    }while(auxSeleccion != seleccion);
                 }
             }
+            
         }
+    }else{
+        for (int i = 0; i < indice; i++){
+            if (strcmp(e[i].mesEmpleado, recep) == 0){
+                idM = i;
+            }
+        }
+
+        if (idM == -2){
+            if (mes != 1 && indice > 0 && recep[0] != '\0')
+            {
+                gotoxy(20,21);
+                cout<<ANSI_COLOR_RED<<"Ingrese solamente el nombre de los meses."<<ANSI_COLOR_RESET;
+                seleccion = 0;
+                getch();
+            }else if(indice == 0 && mes != 1){
+                gotoxy(20,21);
+                cout<<ANSI_COLOR_RED<<"No hay empleados registrados, por favor ingrese datos."<<ANSI_COLOR_RESET;
+                seleccion = 0;
+                getch();
+            }else if(recep[0] == '\0'){
+                gotoxy(20,21);
+                cout<<ANSI_COLOR_RED<<"Dato inv\xA0lido"<<ANSI_COLOR_RESET;
+                getch();
+            }
+        }else{
+            seleccion = idM;
+            // p = 2;
+        }    
+    }
+}
+bool verificarMes(char recep[50], int indice){
+    bool exist = false;
+    char AuxMes[50] = "\0";
+
+    for (int j = 0; j < indice; j++)
+    {
+        strcpy(AuxMes, e[j].mesEmpleado);
+        char *tokenMes = strtok(AuxMes, " ");
+
+        if (tokenMes != NULL){
+            while (tokenMes != NULL){
+                if(strcmp(recep, tokenMes) == 0) {
+                    exist = true;
+                }
+                tokenMes = strtok(NULL, " ");
+            }       
+        }
+    }
+    return exist;
+}
+void mostrarEmpleadoPlanilla(char recep[50], int indice, int point[], int& y, int& x){
+    int b, v;
+    char auxMes[20] = "\0";
+    b = 0;
+    v = 0;
+    y = 13;
+    
+
+    for (int i = 0; i < indice; i++){
+        /* IMPRESION POR EL MES */
+        strcpy(auxMes, e[i].mesEmpleado);
+        char *tokenMes = strtok(auxMes, " ");
+        if (tokenMes != NULL){
+            while (tokenMes != NULL){
+                if (strcmp(recep, tokenMes) == 0){
+                    y++;
+                    // point[v] = b+v;
+                    // v++;
+
+                    gotoxy(10,y);
+                    cout<<e[i].dui;
+
+                    gotoxy(22,y);
+                    cout<<e[i].nom;
+                    
+                    gotoxy(44,y);
+                    cout<<e[i].ape;
+                    
+                    gotoxy(68,y);
+                    cout<<e[i].cargo;
+                    
+                    gotoxy(89,y);
+                    printf("$%.2f\n", e[i].salario);
+                    
+                    gotoxy(101,y); // AFP
+                    cout<<"000.00";
+
+                    gotoxy(115,y); // ISSS
+                    cout<<"000.00";
+                    
+                    gotoxy(127, y);
+                    cout<<"000.00"; // RENTA
+
+                    gotoxy(138,y);
+                        if(e[i].pl.Adescontar <= 0){
+                            printf(" N / A \n");
+                        }else{
+                            printf("$%.2f\n", e[i].pl.Adescontar);
+                        }
+                    
+                    gotoxy(152, y); // NETO
+                    cout << "000.00";
+                }
+                tokenMes = strtok(NULL, " ");
+            }
+        }
+        ++b;
+    }
+    if (v > 0){
+        x = v;
+    }
     getch();
     system("mode con: cols=120 lines=30");
 }
+
 // Aqui inicia el modulo de Adonay @xdesprox
 void registroEmpleados(int& indice){
 
@@ -926,14 +1072,13 @@ void registroDescuentos(int indice) {
                 for (int i = 0; i < 12; i++) {
                     if (strcmp(mesSelec, meses[i]) == 0) {
                         idMes = i; //Obtiene la posicion del mes digitado
-                        strcpy(e[i].pl.mesSelec, mesSelec);
                     }
 
                     if (mesSelec[0] == '\0' || mesSelec[0] == ' ') {
                         idMes = -1; //Devuelve -1 si se encuentra con un salto de linea o espacio
                     }
                 }
-
+    
                 if (validar_cadena(mesSelec) > 0 || idMes == -2 && (validar_cadena(mesSelec) == '\0') || (validar_cadena(mesSelec) == ' ' || idMes == -1)) { //Validacion para mostrar error
                     errores = "- Mes ingresado incorrecto.";
                     gotoxy(20,25);
@@ -945,8 +1090,8 @@ void registroDescuentos(int indice) {
                     cls(28, 13, 20);
                     centinela = 0; //Cambia la variable para mantener el ciclo do-while
                 }
-
             }while(centinela != 1);
+            strcpy(e[seleccion].mesEmpleado, mesSelec);
 
             /* Dias a descontar */
             do{
@@ -991,13 +1136,13 @@ void registroDescuentos(int indice) {
             salarioDia = e[seleccion].salario/diasMeses[idMes]; //Se obtiene el salario diario dependiendo el mes evaluado
 
             e[seleccion].descuento[idMes] = diasD * salarioDia; //Se realiza el descuento dependiendo los dias y el salario diario
-
+            
             gotoxy(13,20);
             cout<<fixed<<setprecision(2)<<ANSI_COLOR_GREEN<<"Descuento realizado: $"<<(float)e[seleccion].descuento[idMes]<<ANSI_COLOR_RESET;         
             gotoxy(20,25);
             mensaje = "Descuentos realizados correctamente.";
             cout<<ANSI_COLOR_GREEN<<mensaje<<ANSI_COLOR_RESET;
-
+                e[seleccion].pl.Adescontar = e[seleccion].descuento[idMes];
             getch();
             salir:
             cout<<"";
@@ -1005,7 +1150,6 @@ void registroDescuentos(int indice) {
         }
     }while (DS != 1);
 }
-
 int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], int& p, int& y) {
     int seleccion;
     int auxSeleccion = '\0';
@@ -1104,7 +1248,6 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
             if (strcmp(e[i].dui, recep) == 0) { //Condicion para buscar el DUI segun el dato ingresado
                 id = i;
             }
-
         }
         
 
