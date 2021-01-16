@@ -62,7 +62,7 @@ int buscarEmpleados(char[50], int, char[25], char[25], int&, int&);
 bool verificarEmpleado(char [50],int);
 void mostrarEmpleados(char [50], int, int [], int&, int&);
 void planillaMensual(int&);
-void mostrarEmpleadoPlanilla(char recep[50], int indice, int [], int& p, int& y);
+void mostrarEmpleadoPlanilla(char recep[50], int indice, int& p, int& y);
 void BuscarEmpleadoPlanilla(char recep[50], int indice, char [50], char[50], int&, int&);
 bool verificarMes(char[50], int);
 
@@ -190,8 +190,7 @@ void planillaMensual(int& indice){
     char str[50] = "Planilla Mensual", str2[80] = "Planilla Quincenal";
     // system("mode con: cols=120 lines=31");
 
-    gotoxy(29,3);
-    cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+    headerWithoutsquare();
         do{
             p = 0;
             system("cls");
@@ -222,6 +221,7 @@ void BuscarEmpleadoPlanilla(char recep[50], int indice, char str[50], char str2[
     int mes;
     bool exist;
     int pointer[indice], a;
+    char Releccion[2];
     y = 13;
     int idM = -2;
 
@@ -246,11 +246,11 @@ void BuscarEmpleadoPlanilla(char recep[50], int indice, char str[50], char str2[
                     getch();
                 }else{
                     do{
-                        system("mode con: cols=167 lines=30");
+                        system("mode con: cols=169 lines=30");
                         
                         system("cls");
                         gotoxy(10, 9);
-                        printf("%c Planilla Mensual / %s",254, recep);
+                        printf("%c %s / %s",254, str, recep);
 
                         gotoxy(12,12);
                         cout<<"DUI";
@@ -292,40 +292,35 @@ void BuscarEmpleadoPlanilla(char recep[50], int indice, char str[50], char str2[
                         cout<<"Salario N";
                         cuadro(150,11,161,13);
 
+                        gotoxy(56,3);
+                        cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+                        if(indice > 6){
+                            cuadroPlanillas(4,6,165,20+indice);
+                        }else{
+                            cuadroPlanillas(4,6,165,30);
+                        }
+                        cuadroPlanillas(4,1,165,5);
                         if (exist) {
-                            gotoxy(56,3);
-                            cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
-                            if(indice > 6){
-                                cuadroPlanillas(4,6,165,20+indice);
-                            }else{
-                                cuadroPlanillas(4,6,155,28);
-                            }
-                            cuadro(4,1,165,5);
-                            mostrarEmpleadoPlanilla(recep, indice, pointer, y, a);
-                        char Releccion[2];
+                            fflush(stdin);
+                            mostrarEmpleadoPlanilla(recep, indice, y, a);
+                            cout <<endl;
+                        }
+                        
                         gotoxy(10, y+3);
-                        cout<< "Presione [Enter] para volver: ";
+                        cout<< "Presione Doble [Enter] para volver: ";
                         fflush(stdin);
                         gets(Releccion);
-                        fflush(stdin);
                         seleccion = validar_numero(Releccion);
-
+                        fflush(stdin);
+                        
                         if (seleccion != 0){
-                            if (seleccion != -1 && seleccion <= a){
+                            if (seleccion != -1){
                                 seleccion = pointer[seleccion-1];
                                 auxSeleccion = seleccion;
-                                // p = 2;
-                            }else{
-                                gotoxy(49,y+6);
-                                cout<<ANSI_COLOR_RED<<"Error: Dato inv\xA0lido";
-                                cuadro(46,y+5,71,y+7);cout<<ANSI_COLOR_RESET;
-                                getch();
+                                p = 2;
                             }
                         }
-                        }
-                        
-
-                        
+                        fflush(stdin);
                     }while(auxSeleccion != seleccion);
                 }
             }
@@ -355,11 +350,9 @@ void BuscarEmpleadoPlanilla(char recep[50], int indice, char str[50], char str2[
                 cout<<ANSI_COLOR_RED<<"Dato inv\xA0lido"<<ANSI_COLOR_RESET;
                 getch();
             }
-        }else{
-            seleccion = idM;
-            // p = 2;
         }    
     }
+    system("mode con: cols=120 lines=30");
 }
 bool verificarMes(char recep[50], int indice){
     bool exist = false;
@@ -381,7 +374,7 @@ bool verificarMes(char recep[50], int indice){
     }
     return exist;
 }
-void mostrarEmpleadoPlanilla(char recep[50], int indice, int point[], int& y, int& x){
+void mostrarEmpleadoPlanilla(char recep[50], int indice, int& y, int& x){
     int b, v;
     char auxMes[20] = "\0";
     b = 0;
@@ -397,8 +390,6 @@ void mostrarEmpleadoPlanilla(char recep[50], int indice, int point[], int& y, in
             while (tokenMes != NULL){
                 if (strcmp(recep, tokenMes) == 0){
                     y++;
-                    // point[v] = b+v;
-                    // v++;
 
                     gotoxy(10,y);
                     cout<<e[i].dui;
@@ -435,6 +426,8 @@ void mostrarEmpleadoPlanilla(char recep[50], int indice, int point[], int& y, in
                     cout << "000.00";
                 }
                 tokenMes = strtok(NULL, " ");
+                gotoxy(10, y+3);
+                cout<< "Presione Doble [Enter] para volver: ";
             }
         }
         ++b;
@@ -443,7 +436,6 @@ void mostrarEmpleadoPlanilla(char recep[50], int indice, int point[], int& y, in
         x = v;
     }
     getch();
-    system("mode con: cols=120 lines=30");
 }
 
 // Aqui inicia el modulo de Adonay @xdesprox
