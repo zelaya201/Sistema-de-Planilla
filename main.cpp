@@ -27,8 +27,7 @@
 
 using namespace std;
 
-struct planilla
-{
+struct planilla{
     float Adescontar;
 };
 struct porcentajeRetenciones {
@@ -79,11 +78,14 @@ bool verificarEmpleado(char [50],int, int&);
 void impresionBuscar(int&, int[], int&, int&, int);
 int verificarDoble(int);
 void mostrarEmpleados(char [50], int, int [], int&, int&);
-void planillaMensual(int);
-void planillaQuincenal();
-void mostrarEmpleadoPlanilla(int seleccion, int indice);
 
+/* Modulo Julio Torres */
+void sistemaPlanilla(int, int);
+void mostrarEmpleadoMensual(int seleccion, int indice);
+void mostrarEmpleadoQuincenal(int, int);
 void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
+/* Prototipos Modulo Julio Torres */
+
 void registroRetenciones(int);
 void registroRetenciones_verPorcentajes(int);
 void registroRetenciones_modificar(int);
@@ -174,8 +176,8 @@ int main(){
         switch(op){
             case 1: system("cls");registroEmpleados(indice);break; //Modulo 1
             case 2: system("cls");registroRetenciones(indice);break; //Modulo 2
-            case 3: system("cls");planillaMensual(indice);break; //Modulo 3
-            case 4: system("cls");cout<<"Modulo en proceso";break; //Modulo 3.1
+            case 3: system("cls");sistemaPlanilla(indice, 3);break; //Modulo 3
+            case 4: system("cls");sistemaPlanilla(indice, 4);break; //Modulo 3.1
             case 5: system("cls");registroDescuentos(indice);break; //Modulo 5
             case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: M"<<"\xA2"<<"dulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
@@ -215,9 +217,9 @@ int menu(){
 
     return opcion; 
 }
-// Planilla quincenal
-void planillaMensual(int indice){
-    int y, p;
+
+void sistemaPlanilla(int indice, int op){
+    // int y, p;
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     int mesSeleccion, PL;
     char recep[500];
@@ -229,10 +231,10 @@ void planillaMensual(int indice){
         do {
             system("mode con: cols=120 lines=30");
             header();
-            
             gotoxy(10,9);
-            printf("%c Planilla Mensual / Seleccion de mes ",254);
-
+            if (op == 3){printf("%c %s / Seleccion de mes ",254, str);
+            }else if(op == 4){printf("%c %s / Seleccion de mes ",254, str2); }
+            
             gotoxy(10, 11);cout<<"[1] Enero";gotoxy(30, 11);cout<<"[7] Julio";
             gotoxy(10, 12);cout<<"[2] Febrero";gotoxy(30, 12);cout<<"[8] Agosto";
             gotoxy(10, 13);cout<<"[3] Marzo";gotoxy(30, 13);cout<<"[9] Septiembre";
@@ -254,13 +256,17 @@ void planillaMensual(int indice){
             if (mesSeleccion == -1 || mesSeleccion > 12) {
                 gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();
             }else if (mesSeleccion > 0 && mesSeleccion <= 12){
-                mostrarEmpleadoPlanilla(mesSeleccion-1, indice);
+                if (op == 3){
+                    mostrarEmpleadoMensual(mesSeleccion-1, indice);
+                }else if(op == 4){
+                    mostrarEmpleadoQuincenal(mesSeleccion-1, indice);
+                }
             }
         
         } while (mesSeleccion != 0);
 }
 
-void mostrarEmpleadoPlanilla(int seleccion, int indice){
+void mostrarEmpleadoMensual(int seleccion, int indice){
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     int y = 13;
     
@@ -358,12 +364,98 @@ void mostrarEmpleadoPlanilla(int seleccion, int indice){
         gotoxy(152, y); // NETO
         e[i].salarioN[seleccion] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[seleccion]);
         if (e[i].salarioN[seleccion] <= 0){
-            printf("$00.00");
+            cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
         }else{
             printf("$%.2f", e[i].salarioN[seleccion]);
         }
     }
 
+    gotoxy(10,y+4);
+    cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver ";
+    getch();
+}
+
+void mostrarEmpleadoQuincenal(int qui, int indice){
+    char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    int y = 13;
+    
+    system("mode con: cols=149 lines=30");
+
+    gotoxy(10, 9);
+    printf("%c Planilla Quincenal /  %s ",254, meses[qui]);
+
+    gotoxy(12,12);
+    cout<<"DUI";
+    cuadro(8,11,20,13);
+
+    gotoxy(27,12);
+    cout<<"Nombre";
+    cuadro(20,11,42,13);
+
+    gotoxy(48,12);
+    cout<<"Apellidos";
+    cuadro(42,11,66,13);
+
+    gotoxy(72,12);
+    cout<<"Cargo";
+    cuadro(66,11,88,13);
+
+    gotoxy(92,12);
+    cout<<"Salario";
+    cuadro(88,11,102,13);
+    
+    gotoxy(104,12);
+    cout<<"Salario Neto M";
+    cuadro(102,11,121,13);
+    
+    gotoxy(124,12);
+    cout<<"Salario Neto Q";
+    cuadro(121,11,140,13);
+
+    gotoxy(36,3);
+    cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+    
+    if(indice > 6){
+        cuadroPlanillas(4,6,145,20+indice);
+    }else{
+        cuadroPlanillas(4,6,145,28);
+    }
+    cuadroPlanillas(4,1,145,5);
+
+    for (int i = 0; i < indice; i++){
+        /* IMPRESION POR EL MES */
+        y++;
+
+        gotoxy(10,y);
+        cout<<e[i].dui;
+
+        gotoxy(22,y);
+        cout<<e[i].nom;
+        
+        gotoxy(44,y);
+        cout<<e[i].ape;
+        
+        gotoxy(68,y);
+        cout<<e[i].cargo;
+        
+        gotoxy(91,y);
+        printf("$%.2f\n", e[i].salario);
+        
+        calculoRetenciones(indice);
+        gotoxy(106,y); // Salario Neto Mensual
+        e[i].salarioN[qui] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[qui]);
+        if (e[i].salarioN[qui] <= 0){
+            cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
+        }else{
+            printf("$%.2f", e[i].salarioN[qui]);
+        }
+        gotoxy(126,y); // Salario Neto Quincenal
+        if (e[i].salarioN[qui] <= 0){
+            cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
+        }else{
+            printf("$%.2f", (e[i].salarioN[qui] / 2));
+        }
+    }
     gotoxy(10,y+4);
     cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver ";
     getch();
