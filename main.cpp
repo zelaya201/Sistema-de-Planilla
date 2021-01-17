@@ -171,7 +171,7 @@ int main(){
 }
 
 int menu(){// Mis opciones [3] y [4]
-    char opAux[200];
+    char opAux[500];
     int opcion;
 
     system("cls");
@@ -329,7 +329,7 @@ void planillaMensual(int& indice)
 
 // Aqui inicia el modulo de Adonay @xdesprox
 void registroEmpleados(int& indice){
-    char select[200];
+    char select[500];
     int op;
 
     do{
@@ -1010,7 +1010,7 @@ void registroDescuentos(int indice) {
 }
 
 void registroRetenciones(int indice) {
-    char select[200];
+    char select[500];
     int op = 0;
 
     do{
@@ -1103,7 +1103,7 @@ void registroRetenciones_verPorcentajes(int indice) {
         } 
 
         gotoxy(10,23);
-        cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver\n";
+        cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver ";
         getch();
     }else {
         do {
@@ -1278,15 +1278,15 @@ void registroRetenciones_modificar(int indice){
                 cls(8,92,j); //Limpia un trozo de la pantalla
             } 
             gotoxy(71,13);
-            cout<<"AFP";gotoxy(92, 13);cout<<h[i].p[i].porAfp<<"%";
+            cout<<"AFP";gotoxy(92, 13);cout<<h[i].p[i].porAfp<<" %";
             gotoxy(71,14);
-            cout<<"ISSS";gotoxy(92, 14);cout<<h[i].p[i].porIsss<<"%";
+            cout<<"ISSS";gotoxy(92, 14);cout<<h[i].p[i].porIsss<<" %";
             gotoxy(71,15);
-            cout<<"Renta II Tramo";gotoxy(92, 15);cout<<h[i].p[i].porRenta1<<"%";
+            cout<<"Renta II Tramo";gotoxy(92, 15);cout<<h[i].p[i].porRenta1<<" %";
             gotoxy(71,16);
-            cout<<"Renta III Tramo";gotoxy(92, 16);cout<<h[i].p[i].porRenta2<<"%";
+            cout<<"Renta III Tramo";gotoxy(92, 16);cout<<h[i].p[i].porRenta2<<" %";
             gotoxy(71,17);
-            cout<<"Renta IV Tramo";gotoxy(92, 17);cout<<h[i].p[i].porRenta3<<"%";    
+            cout<<"Renta IV Tramo";gotoxy(92, 17);cout<<h[i].p[i].porRenta3<<" %";    
         }
     }
 
@@ -1331,6 +1331,9 @@ void registroRetenciones_modificar(int indice){
             h[conteoModificaciones].p[conteoModificaciones].porAfp = afp;
             h[conteoModificaciones].accion[conteoModificaciones] += "AFP";
             h[conteoModificaciones].estado = 1;
+            
+            cls(8,92,13);
+            gotoxy(92, 13);cout<<ANSI_COLOR_GREEN<<afp<<" %"<<ANSI_COLOR_RESET;
         }
     }while(centinela != 1);
 
@@ -1366,6 +1369,10 @@ void registroRetenciones_modificar(int indice){
                 h[conteoModificaciones].accion[conteoModificaciones] += "ISSS";
             }
             h[conteoModificaciones].estado = 1;
+
+            cls(8,92,14);
+            gotoxy(92,14);
+            cout<<ANSI_COLOR_GREEN<<isss<<" %"<<ANSI_COLOR_RESET;
         }
     }while(centinela != 1);
 
@@ -1401,6 +1408,10 @@ void registroRetenciones_modificar(int indice){
                 h[conteoModificaciones].accion[conteoModificaciones] += "Renta II Tramo";
             }
             h[conteoModificaciones].estado = 1;
+
+            cls(8,92,15);
+            gotoxy(92, 15);
+            cout<<ANSI_COLOR_GREEN<<renta1<<" %"<<ANSI_COLOR_RESET;
         }
 
     }while(centinela != 1);
@@ -1435,6 +1446,10 @@ void registroRetenciones_modificar(int indice){
                 h[conteoModificaciones].accion[conteoModificaciones] += "Renta III Tramo";
             }
             h[conteoModificaciones].estado = 1;
+
+            cls(8,92,16);
+            gotoxy(92,16);
+            cout<<ANSI_COLOR_GREEN<<renta2<<" %"<<ANSI_COLOR_RESET;
         }
     }while(centinela != 1);    
 
@@ -1468,6 +1483,10 @@ void registroRetenciones_modificar(int indice){
                 h[conteoModificaciones].accion[conteoModificaciones] += "Renta IV Tramo";
             }
             h[conteoModificaciones].estado = 1;
+
+            cls(8,92,17);
+            gotoxy(92, 17);
+            cout<<ANSI_COLOR_GREEN<<renta3<<" %"<<ANSI_COLOR_RESET;
         }
     }while(centinela != 1);
 
@@ -1501,7 +1520,7 @@ void registroRetenciones_historial(int indice) {
     string auxAccion;
     int auxEstado;
     float auxAfp, auxIsss, auxRenta1, auxRenta2, auxRenta3;
-    char recepSeleccion[200];
+    char recepSeleccion[500];
 
     for (int i = 1; i < conteoModificaciones; i++) {
         pos = i;
@@ -1535,8 +1554,9 @@ void registroRetenciones_historial(int indice) {
     do {
         y = 13;
 
+        /* ampliar_pantalla(conteoModificaciones+20); */
         if (conteoModificaciones >= 7) {
-            ampliar_pantalla(conteoModificaciones+12);
+            ampliar_pantalla(conteoModificaciones+2);
         }else {
             system("mode con: cols=120 lines=30");
             header();
@@ -1563,7 +1583,7 @@ void registroRetenciones_historial(int indice) {
             cout<<"No se han realizado modificaciones"<<endl;
             
             gotoxy(10,y+4);
-            cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver\n";
+            cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver ";
             getch();
         }else {
             for (int i = 1; i < conteoModificaciones; i++) {
@@ -1633,7 +1653,7 @@ void registroRetenciones_historial(int indice) {
 }
 
 void registroRetenciones_historial_detalles(int seleccion, int indice) {
-    char recep[200], recepM[200];
+    char recep[500], recepM[500];
     int op, validar, opM;
     
     do {
@@ -1889,7 +1909,7 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
                         cout<<"Salario";
                         cuadro(97,11,110,13);
                         
-                        char recepSeleccion[2];
+                        char recepSeleccion[500];
                         gotoxy(10, y+3);
                         cout<<"Seleccione empleado o presione [Enter] para volver: ";
                         gets(recepSeleccion); //Se obtiene la seleccion
