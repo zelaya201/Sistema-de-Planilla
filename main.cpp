@@ -220,28 +220,50 @@ void planillaMensual(int& indice){
 
     gotoxy(56,3);cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
         do{
-            p = 0;
             system("cls");
             header();
             cuadro(6,20,112,27);
             gotoxy(8, 21);
             cout<<"Mensaje(s): ";
             gotoxy(8,23);
-            cout<<"Nota: "<<ANSI_COLOR_YELLOWLIGTH<<" Digita [1] para volver."<<ANSI_COLOR_RESET;
+            cout<<"Nota: "<<ANSI_COLOR_YELLOWLIGTH<<" Digita [0] para volver."<<ANSI_COLOR_RESET;
             gotoxy(10,9);
             printf("%c Planilla Mensual / ... ",254);
-            gotoxy(30, 14);
-            cout<<"Indicaci\xA2n: Escriba el mes a buscar";
-            cuadro(26,11,90,13);
-            gotoxy(28,12);
-            cout<<"Buscar: ";
+
+            gotoxy(20, 11);cout<<"[1]. Enero";gotoxy(50, 11);cout<<"[7]. Julio";
+            gotoxy(20, 12);cout<<"[2]. Febrero";gotoxy(50, 12);cout<<"[8]. Agosto";
+            gotoxy(20, 13);cout<<"[3]. Marzo";gotoxy(50, 13);cout<<"[9]. Septiembre";
+            gotoxy(20, 14);cout<<"[4]. Abril";gotoxy(50, 14);cout<<"[10]. Octubre";
+            gotoxy(20, 15);cout<<"[5]. Mayo";gotoxy(50, 15);cout<<"[11]. Noviembre";
+            gotoxy(20, 16);cout<<"[6]. Junio";gotoxy(50, 16);cout<<"[12]. Diciembre";
+
+            gotoxy(21, 18);cout<<"Opcion: ";
+            
             fflush(stdin);
             gets(recep);
-            recep[0] = toupper(recep[0]);
             PL = validar_numero(recep);
-            BuscarEmpleadoPlanilla(recep, indice, str, str2, p, y);
+            for (int m = 1; m <= 9; m++){
+                int recepEntero = recep[2] - '0';
+                if (recepEntero == m){
+                    MesSeleccion = m;
+                    strcpy(recep, meses[MesSeleccion]);
+                }
+                if (strcmp(recep, "10")){
+                    strcpy(recep, meses[10]);
+                }
+                if (strcmp(recep, "11")){
+                    strcpy(recep, meses[11]);
+                }
+                if (strcmp(recep, "12")){
+                    strcpy(recep, meses[12]);
+                }
+                
+            }
+            mostrarEmpleadoPlanilla(recep, indice, y, p);
             
-        } while (PL != 1);
+            // BuscarEmpleadoPlanilla(recep, indice, str, str2, p, y);
+            
+        } while (recep == 0);
 }
 void BuscarEmpleadoPlanilla(char recep[50], int indice, char str[50], char str2[50], int& p, int& y){
     int seleccion;
@@ -270,7 +292,7 @@ void BuscarEmpleadoPlanilla(char recep[50], int indice, char str[50], char str2[
 
                 if(!exist){
                     gotoxy(20,21);
-                    cout<<ANSI_COLOR_RED<<"Empleados no econtrados en este mes."<<ANSI_COLOR_RESET;
+                    cout<<ANSI_COLOR_RED<<"Datos no encontrados o asegurese que lo esta escribiendo bien."<<ANSI_COLOR_RESET;
                     getch();
                 }else{
                     do{
@@ -452,7 +474,13 @@ void mostrarEmpleadoPlanilla(char recep[50], int indice, int& y, int& x){
                         }
                     
                     gotoxy(152, y); // NETO
-                    printf("$%.2f", (e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].pl.Adescontar)));
+                    float neto;
+                    neto = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].pl.Adescontar);
+                    if (neto <= 0){
+                        printf("$00.00");
+                    }else{
+                        printf("$%.2f", neto);
+                    }
                 }
                 tokenMes = strtok(NULL, " ");
                 gotoxy(10, y+3);
@@ -460,7 +488,6 @@ void mostrarEmpleadoPlanilla(char recep[50], int indice, int& y, int& x){
         }
         ++b;
     }
-                    cout<< "Presione Doble [Enter] para volver: ";
     if (v > 0){
         x = v;
     }
