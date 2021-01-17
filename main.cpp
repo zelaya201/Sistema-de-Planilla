@@ -80,6 +80,7 @@ void impresionBuscar(int&, int[], int&, int&, int);
 int verificarDoble(int);
 void mostrarEmpleados(char [50], int, int [], int&, int&);
 void planillaMensual(int&);
+void planillaQuincenal();
 void mostrarEmpleadoPlanilla(char recep[50], int indice, int& p, int& y);
 void BuscarEmpleadoPlanilla(char recep[50], int indice, char [50], char[50], int&, int&);
 bool verificarMes(char[50], int);
@@ -208,7 +209,7 @@ int menu(){
 
     return opcion; 
 }
-
+// Planilla quincenal
 void planillaMensual(int& indice){
     int y, p;
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
