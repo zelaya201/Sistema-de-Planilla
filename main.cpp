@@ -97,13 +97,6 @@ int main(){
 
     int op;
 
-    /*int dui[row] = {'\0'};
-    int indice = 0;
-    char e.e[i].nom[row][cols] = {'\0'}, ape[row][cols] = {'\0'}, cargo[row][cols] = {'\0'};
-    float salario[row]; */
-
-    /* PARA PROBAR Y EVITARSE ESTAR REGISTRANDO DATOS XD */
-
     char dui[row][10] = {{"012345678"},{"087654321"},{"017283782"},{"010293827"},{"029382019"},{"020391827"},{"099281762"},{"028379120"},{"090908990"}};
     int indice = 9;
     char nom[row][cols] = {
@@ -221,7 +214,7 @@ void sistemaPlanilla(int indice, int op){ // Modulo 3 Sub-Menu: Encargado Julio 
     char str[50] = "Planilla Mensual", str2[80] = "Planilla Quincenal";
 
     /* Diseño del menu de meses*/
-    gotoxy(56,3);cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+    header();
         do {
             system("mode con: cols=120 lines=30"); // Modificar tamaño de ventana
             header();
@@ -276,15 +269,15 @@ void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de 
     cout<<"DUI";
     cuadro(8,11,20,13);
 
-    gotoxy(27,12);
+    gotoxy(28,12);
     cout<<"Nombre";
     cuadro(20,11,42,13);
 
-    gotoxy(48,12);
+    gotoxy(50,12);
     cout<<"Apellidos";
     cuadro(42,11,66,13);
 
-    gotoxy(71,12);
+    gotoxy(74,12);
     cout<<"Cargo";
     cuadro(66,11,86,13);
 
@@ -300,17 +293,17 @@ void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de 
     cout<<"ISSS";
     cuadro(112,11,125,13);
 
-    gotoxy(127, 12);
+    gotoxy(128, 12);
     cout<<"RENTA";
     cuadro(125,11,136,13);
     
-    gotoxy(138,12);
+    gotoxy(139,12);
     cout<<"Descuentos";
     cuadro(136,11,150,13);
 
-    gotoxy(151,12);
+    gotoxy(152,12);
     cout<<"Salario N";
-    cuadro(150,11,161,13);
+    cuadro(150,11,162,13);
 
     for (int i = 0; i < indice; i++){
         /* IMPRESION POR DE LOS VALORES POR MES SELECCIONADO */
@@ -332,7 +325,7 @@ void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de 
         printf("$%.2f\n", e[i].salario);
         
         calculoRetenciones(indice);
-        gotoxy(101,y); // AFP
+        gotoxy(102,y); // AFP
         printf("$%.2f",e[i].afp);
 
         gotoxy(115,y); // ISSS
@@ -341,7 +334,7 @@ void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de 
         gotoxy(127, y);
         printf("$%.2f", e[i].renta); // RENTA
 
-        gotoxy(138,y);
+        gotoxy(139,y);
             if(e[i].descuento[seleccion] == 0){
                 printf(" N / A \n");
             }else{
@@ -376,23 +369,23 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
     cout<<"DUI";
     cuadro(8,11,20,13);
 
-    gotoxy(27,12);
+    gotoxy(28,12);
     cout<<"Nombre";
     cuadro(20,11,42,13);
 
-    gotoxy(48,12);
+    gotoxy(50,12);
     cout<<"Apellidos";
     cuadro(42,11,66,13);
 
-    gotoxy(72,12);
+    gotoxy(73,12);
     cout<<"Cargo";
-    cuadro(66,11,88,13);
+    cuadro(66,11,86,13);
 
-    gotoxy(92,12);
+    gotoxy(91,12);
     cout<<"Salario";
-    cuadro(88,11,102,13);
+    cuadro(86,11,102,13);
     
-    gotoxy(104,12);
+    gotoxy(105,12);
     cout<<"Salario Neto M";
     cuadro(102,11,121,13);
     
@@ -420,14 +413,14 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
         printf("$%.2f\n", e[i].salario);
         
         calculoRetenciones(indice);
-        gotoxy(106,y); // Salario Neto Mensual
+        gotoxy(107,y); // Salario Neto Mensual
         e[i].salarioN[qui] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[qui]);
         if (e[i].salarioN[qui] <= 0){
             cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
         }else{
             printf("$%.2f", e[i].salarioN[qui]);
         }
-        gotoxy(126,y); // Salario Neto Quincenal
+        gotoxy(127,y); // Salario Neto Quincenal
         if (e[i].salarioN[qui] <= 0){
             cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
         }else{
@@ -643,13 +636,12 @@ void registroEmpleados_registrar(int& indice){
 void registroEmpleados_edit(int& indice){
 
     //Variables declaradas
-    int seleccion, DS, y, p, validar, conteo, centinela, num, cifras;
-    float auxSueldo;
-    string errores, mensaje;
-    char recep[50], auxNom[cols], auxApe[cols], auxCargo[cols], temp[cols];
+    int seleccion, DS, y, p, validar, conteo, centinela, num, cifras, verificador;
+    float salario;
     char *salarioAux;
-    char SV[10] = {'\0'};
+    char recep[50], RecepTemp[cols];
     char str1[25] = "empleados", str2[25] = "Editar / Seleccionar";
+    string errores, mensaje;
     
     do{
         p = 0; 
@@ -679,122 +671,151 @@ void registroEmpleados_edit(int& indice){
             system("cls");
             header();
             cuadro(6,20,112,27);
-            gotoxy(8,21); cout<<"Mensaje(s): ";
+
+            //INFORMACION DEL EMPLEADO
+            cuadro(67,9,108,19);
+            cuadro(73,10,102,12);
+            gotoxy(76,11); cout<<"Informaci\xA2n del empleado";
+
+            gotoxy(71,13); cout<<"DUI:";
+            gotoxy(71,14); cout<<"Nombres:";
+            gotoxy(71,15); cout<<"Apellidos:";
+            gotoxy(71,16); cout<<"Cargo:";
+            gotoxy(71,17); cout<<"Salario:";
+
+            gotoxy(82,13); cout<<e[seleccion].dui;
+            gotoxy(82,14); cout<<e[seleccion].nom;
+            gotoxy(82,15); cout<<e[seleccion].ape;
+            gotoxy(82,16); cout<<e[seleccion].cargo;
+            gotoxy(82,17); cout<<"$"<<e[seleccion].salario;
+
+            gotoxy(8,21); cout<<"Mensaje(s): "; //Area de mensajes
         
-            gotoxy(10,9);
-            printf("%c Registro de empleados / Editar / DUI: %s",254,e[seleccion].dui);
+            gotoxy(10,9); printf("%c Registro de empleados / Editar / DUI: %s",254,e[seleccion].dui);
             gotoxy(8,23); cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" Presiona [Enter] consecutivos si no desea realizar cambios."<<ANSI_COLOR_RESET;
 
             /* EDITAR NOMBRE */
             do{
                 centinela = 1;
-                cls(strlen(e[seleccion].nom) + strlen(temp) + 17, 11, 12); //Borra linea de la pantalla
+                verificador = 1;
+                cls(strlen(RecepTemp) + 16, 11, 12); //Borra linea de la pantalla
 
-                gotoxy(11,12); cout<<"Nuevo nombre "<<"("<<e[seleccion].nom<<"): ";
-                strcpy(auxNom, e[seleccion].nom);
-                gets(e[seleccion].nom);
+                gotoxy(11,12); cout<<"Nuevo nombre: ";
+                gets(RecepTemp);
 
-                if(validar_cadena(e[seleccion].nom) > 0){
-                    strcpy(temp, e[seleccion].nom);
-                    strcpy(e[seleccion].nom, auxNom);
+                if(validar_cadena(RecepTemp) > 0){
                     errores = "Nuevo nombre incorrecto.";
                     gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
                     getch();
                     cls(errores.length(), 20, 21);
                     centinela = 0;
-                }else if((e[seleccion].nom[0] == '\0') || (e[seleccion].nom[0] == ' ')){
-                    strcpy(e[seleccion].nom, auxNom);
-                    centinela = 1;
+                }else if((RecepTemp[0] == '\0') || (RecepTemp[0] == ' ')){
                     conteo++;
+                    verificador = 0;
                 }
 
-            }while(centinela != 1);    
+            }while(centinela != 1);
+
+            if(verificador == 1){
+                cls(strlen(e[seleccion].nom), 82, 14);
+                strcpy(e[seleccion].nom, RecepTemp);
+                gotoxy(82,14); cout<<ANSI_COLOR_GREEN<<e[seleccion].nom<<ANSI_COLOR_RESET;
+            }
+
 
             /* EDITAR APELLIDOS */
             do{
                 centinela = 1;
-                cls(strlen(e[seleccion].ape) + strlen(temp) + 22, 11, 13);
+                verificador = 1;
+                cls(strlen(RecepTemp) + 20, 11, 13);
 
-                gotoxy(11,13); cout<<"Nuevos apellidos "<<"("<<e[seleccion].ape<<"): ";
-                strcpy(auxApe, e[seleccion].ape);
-                gets(e[seleccion].ape);
+                gotoxy(11,13); cout<<"Nuevos apellidos: ";
+                gets(RecepTemp);
 
-                if(validar_cadena(e[seleccion].ape) > 0){
-                    strcpy(temp, e[seleccion].ape);
-                    strcpy(e[seleccion].ape, auxApe);
+                if(validar_cadena(RecepTemp) > 0){
                     errores = "Nuevos apellidos incorrectos.";
                     gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
                     getch();
                     cls(errores.length(), 20, 21);
                     centinela = 0;
-                }else if((e[seleccion].ape[0] == '\0') || (e[seleccion].ape[0] == ' ')){
-                    strcpy(e[seleccion].ape, auxApe);
-                    centinela = 1;
+                }else if((RecepTemp[0] == '\0') || (RecepTemp[0] == ' ')){
                     conteo++;
+                    verificador = 0;
                 }
 
             }while(centinela != 1);
 
+            if(verificador == 1){
+                cls(strlen(e[seleccion].ape), 82, 15);
+                strcpy(e[seleccion].ape, RecepTemp);
+                gotoxy(82,15); cout<<ANSI_COLOR_GREEN<<e[seleccion].ape<<ANSI_COLOR_RESET;
+            }
+
             /* EDITAR CARGO */
             do{
                 centinela = 1;
-                cls(strlen(e[seleccion].cargo) + strlen(temp) + 17, 11, 14);
+                verificador = 1;
+                cls(strlen(RecepTemp) + 15, 11, 14);
 
-                gotoxy(11,14); cout<<"Nuevo cargo "<<"("<<e[seleccion].cargo<<"): ";
-                strcpy(auxCargo, e[seleccion].cargo);
-                gets(e[seleccion].cargo);
+                gotoxy(11,14); cout<<"Nuevo cargo: ";
+                gets(RecepTemp);
 
-                if(validar_cadena(e[seleccion].cargo) > 0){
-                    strcpy(temp, e[seleccion].cargo);
-                    strcpy(e[seleccion].cargo, auxCargo);
+                if(validar_cadena(RecepTemp) > 0){;
                     errores = "Nuevo cargo incorrecto.";
                     gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
                     getch();
                     cls(errores.length(), 20, 21);
                     centinela = 0;
-                }else if((e[seleccion].cargo[0] == '\0') || (e[seleccion].cargo[0] == ' ')){
-                    strcpy(e[seleccion].cargo, auxCargo);
-                    centinela = 1;
+                }else if((RecepTemp[0] == '\0') || (RecepTemp[0] == ' ')){
                     conteo++;
+                    verificador = 0;
                 }
 
             }while(centinela != 1);
+
+            if(verificador == 1){
+                cls(strlen(e[seleccion].cargo), 82, 16);
+                strcpy(e[seleccion].cargo, RecepTemp);
+                gotoxy(82,16); cout<<ANSI_COLOR_GREEN<<e[seleccion].cargo<<ANSI_COLOR_RESET;
+            }
 
             /* EDITAR SALARIO */
             cifras = 0;
             do{
+                verificador = 1;
                 centinela = 1;
-                cls(cifras + strlen(temp) + 24, 11, 15);
+                cls(strlen(RecepTemp) + 18, 11, 15);
 
-                gotoxy(11,15); cout<<"Nuevo salario "<<"($"<<fixed<<setprecision(2)<<e[seleccion].salario<<"): $";
-                auxSueldo = e[seleccion].salario;
-                gets(SV);
+                gotoxy(11,15); cout<<"Nuevo salario: $";
+                gets(RecepTemp);
 
-                e[seleccion].salario = strtod(SV, &salarioAux);
+                salario = strtod(RecepTemp, &salarioAux);
 
-                if(((e[seleccion].salario == 0) && (SV[0] != '\0')) || salarioAux[0] != '\0'){
-                    strcpy(temp, SV);
-                    e[seleccion].salario = auxSueldo;
+                if(((salario == 0) && (RecepTemp[0] != '\0')) || salarioAux[0] != '\0'){
                     errores = "Cantidad de nuevo salario incorrecta.";
                     gotoxy(20,21); cout<<ANSI_COLOR_RED<<errores<<ANSI_COLOR_RESET;
-                    getch(); 
-                    
-                    //Obteniendo cantidad de cifras
-                    num = trunc(e[seleccion].salario);
-                    while(num >= 10){
-                        num /= 10;
-                        cifras++;
-                    }
-
+                    getch();   
                     cls(errores.length(), 20, 21);
                     centinela = 0;
-                }else if(e[seleccion].salario == 0){
-                    e[seleccion].salario = auxSueldo;
-                    centinela = 1;
+                }else if(salario == 0){
                     conteo++;
+                    verificador = 0;
                 }
 
             }while(centinela != 1);
+
+            if(verificador == 1){
+                //Obteniendo cantidad de cifras
+                num = trunc(e[seleccion].salario);
+                while(num >= 10){
+                    num /= 10;
+                    cifras++;
+                }
+
+                cls(cifras + 5, 82, 17); 
+                e[seleccion].salario = salario;
+                gotoxy(82,17); cout<<ANSI_COLOR_GREEN<<"$"<<e[seleccion].salario<<ANSI_COLOR_RESET;
+            }
 
             if(conteo == 4){
                 mensaje = ANSI_COLOR_YELLOWLIGTH;
@@ -810,7 +831,7 @@ void registroEmpleados_edit(int& indice){
 
     }while(DS != 1);
 
-}//Adonay
+}
 
 void registroEmpleados_delete(int& indice){
 
@@ -2342,7 +2363,7 @@ void ampliar_pantallaPlanilla(int c, int opc){
         }
 
         cuadroPlanillas(4,1,165,5);
-        gotoxy(56,3); cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+        gotoxy(47,3); cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
     }else if (opc == 4)
     {
         char mode[40] = "mode con: cols=149 lines=";
@@ -2360,7 +2381,7 @@ void ampliar_pantallaPlanilla(int c, int opc){
             cuadroPlanillas(4,6,145,20);
         }
         cuadroPlanillas(4,1,145,5);
-        gotoxy(36,3); cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
+        gotoxy(37,3); cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
     }
     
     
