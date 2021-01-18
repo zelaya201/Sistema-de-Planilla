@@ -432,7 +432,6 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
     getch();
 }
 
-// Aqui inicia el modulo de Adonay @xdesprox
 void registroEmpleados(int& indice){
     char select[500];
     int op;
