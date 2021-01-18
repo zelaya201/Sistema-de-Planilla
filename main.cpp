@@ -97,13 +97,6 @@ int main(){
 
     int op;
 
-    /*int dui[row] = {'\0'};
-    int indice = 0;
-    char e.e[i].nom[row][cols] = {'\0'}, ape[row][cols] = {'\0'}, cargo[row][cols] = {'\0'};
-    float salario[row]; */
-
-    /* PARA PROBAR Y EVITARSE ESTAR REGISTRANDO DATOS XD */
-
     char dui[row][10] = {{"012345678"},{"087654321"},{"017283782"},{"010293827"},{"029382019"},{"020391827"},{"099281762"},{"028379120"},{"090908990"}};
     int indice = 9;
     char nom[row][cols] = {
