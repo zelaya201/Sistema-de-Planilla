@@ -98,7 +98,7 @@ int main(){
     int op;
 
     char dui[row][10] = {{"012345678"},{"087654321"},{"017283782"},{"010293827"},{"029382019"},{"020391827"},{"099281762"},{"028379120"},{"090908990"}};
-    int indice = 9;
+    int indice = 3;
     char nom[row][cols] = {
         {"Josue Adonay"},
         {"Antonio Alejandro"},
@@ -1630,7 +1630,13 @@ void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de 
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     int y = 13;
     
-    ampliar_pantallaPlanilla(indice, op);
+    if(indice == 0){
+        ampliar_pantallaPlanilla(9, 3);
+    }else if(indice >= 1 && indice <= 7){
+        ampliar_pantallaPlanilla(9, 3);
+    }else{
+        ampliar_pantallaPlanilla(indice, op);
+    }
 
     gotoxy(10, 9);
     printf("%c Planilla Mensual / Seleccion de mes /  %s ",254, meses[seleccion]); // Impresion del mes correspondinte segun eleccion en menu meses
@@ -1675,48 +1681,53 @@ void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de 
     cout<<"Salario N";
     cuadro(150,11,162,13);
 
-    for (int i = 0; i < indice; i++){
-        /* IMPRESION POR DE LOS VALORES POR MES SELECCIONADO */
-        y++;
+    if(indice == 0){
+        gotoxy(74,14);
+        cout<<"No se han realizado registros.";
+    }else{
+        for (int i = 0; i < indice; i++){
+            /* IMPRESION POR DE LOS VALORES POR MES SELECCIONADO */
+            y++;
 
-        gotoxy(10,y);
-        cout<<e[i].dui;
+            gotoxy(10,y);
+            cout<<e[i].dui;
 
-        gotoxy(22,y);
-        cout<<e[i].nom;
-        
-        gotoxy(44,y);
-        cout<<e[i].ape;
-        
-        gotoxy(68,y);
-        cout<<e[i].cargo;
-        
-        gotoxy(89,y);
-        printf("$%.2f\n", e[i].salario);
-        
-        calculoRetenciones(indice);
-        gotoxy(102,y); // AFP
-        printf("$%.2f",e[i].afp);
+            gotoxy(22,y);
+            cout<<e[i].nom;
+            
+            gotoxy(44,y);
+            cout<<e[i].ape;
+            
+            gotoxy(68,y);
+            cout<<e[i].cargo;
+            
+            gotoxy(89,y);
+            printf("$%.2f\n", e[i].salario);
+            
+            calculoRetenciones(indice);
+            gotoxy(102,y); // AFP
+            printf("$%.2f",e[i].afp);
 
-        gotoxy(115,y); // ISSS
-        printf("$%.2f",e[i].isss);
-        
-        gotoxy(127, y);
-        printf("$%.2f", e[i].renta); // RENTA
+            gotoxy(115,y); // ISSS
+            printf("$%.2f",e[i].isss);
+            
+            gotoxy(127, y);
+            printf("$%.2f", e[i].renta); // RENTA
 
-        gotoxy(139,y);
-            if(e[i].descuento[seleccion] == 0){
-                printf(" N / A \n");
+            gotoxy(139,y);
+                if(e[i].descuento[seleccion] == 0){
+                    printf(" N / A \n");
+                }else{
+                    printf("$%.2f\n", e[i].descuento[seleccion]);
+                }
+            
+            gotoxy(152, y); // Calculo del salario NETO, que corresponde a la resta de las retenciones de ley
+            e[i].salarioN[seleccion] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[seleccion]);
+            if (e[i].salarioN[seleccion] <= 0){
+                cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
             }else{
-                printf("$%.2f\n", e[i].descuento[seleccion]);
+                printf("$%.2f", e[i].salarioN[seleccion]);
             }
-        
-        gotoxy(152, y); // Calculo del salario NETO, que corresponde a la resta de las retenciones de ley
-        e[i].salarioN[seleccion] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[seleccion]);
-        if (e[i].salarioN[seleccion] <= 0){
-            cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
-        }else{
-            printf("$%.2f", e[i].salarioN[seleccion]);
         }
     }
 
@@ -1730,7 +1741,13 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     int y = 13;
     
-    ampliar_pantallaPlanilla(indice, op); // Ampliar pantalla para la ventana de planilla quincenal
+    if(indice == 0){// Ampliar ventana de planilla quincenal
+        ampliar_pantallaPlanilla(9, 4);
+    }else if(indice >= 1 && indice <= 7){
+        ampliar_pantallaPlanilla(9, 4);
+    }else{
+        ampliar_pantallaPlanilla(indice, op);
+    }
 
     gotoxy(10, 9);
     printf("%c Planilla Quincenal / Seleccion de mes / %s ",254, meses[qui]);
@@ -1763,38 +1780,44 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
     cout<<"Salario Neto Q";
     cuadro(121,11,140,13);
 
-    for (int i = 0; i < indice; i++){
-        /* IMPRESION POR EL MES */
-        y++;
+    if(indice == 0){
+        gotoxy(64,14);
+        cout<<"No se han realizado registros.";
+    }else{
 
-        gotoxy(10,y);
-        cout<<e[i].dui;
+        for (int i = 0; i < indice; i++){
+            /* IMPRESION POR EL MES */
+            y++;
 
-        gotoxy(22,y);
-        cout<<e[i].nom;
-        
-        gotoxy(44,y);
-        cout<<e[i].ape;
-        
-        gotoxy(68,y);
-        cout<<e[i].cargo;
-        
-        gotoxy(91,y);
-        printf("$%.2f\n", e[i].salario);
-        
-        calculoRetenciones(indice);
-        gotoxy(107,y); // Salario Neto Mensual
-        e[i].salarioN[qui] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[qui]);
-        if (e[i].salarioN[qui] <= 0){
-            cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
-        }else{
-            printf("$%.2f", e[i].salarioN[qui]);
-        }
-        gotoxy(127,y); // Salario Neto Quincenal
-        if (e[i].salarioN[qui] <= 0){
-            cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
-        }else{
-            printf("$%.2f", (e[i].salarioN[qui] / 2));
+            gotoxy(10,y);
+            cout<<e[i].dui;
+
+            gotoxy(22,y);
+            cout<<e[i].nom;
+            
+            gotoxy(44,y);
+            cout<<e[i].ape;
+            
+            gotoxy(68,y);
+            cout<<e[i].cargo;
+            
+            gotoxy(91,y);
+            printf("$%.2f\n", e[i].salario);
+            
+            calculoRetenciones(indice);
+            gotoxy(107,y); // Salario Neto Mensual
+            e[i].salarioN[qui] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[qui]);
+            if (e[i].salarioN[qui] <= 0){
+                cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
+            }else{
+                printf("$%.2f", e[i].salarioN[qui]);
+            }
+            gotoxy(127,y); // Salario Neto Quincenal
+            if (e[i].salarioN[qui] <= 0){
+                cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
+            }else{
+                printf("$%.2f", (e[i].salarioN[qui] / 2));
+            }
         }
     }
     gotoxy(10,y+5);
