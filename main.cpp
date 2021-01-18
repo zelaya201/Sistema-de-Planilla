@@ -360,7 +360,7 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
     int y = 13;
     
-    ampliar_pantallaPlanilla(indice, op);
+    ampliar_pantallaPlanilla(indice, op); // Ampliar pantalla para la ventana de planilla quincenal
 
     gotoxy(10, 9);
     printf("%c Planilla Quincenal / Seleccion de mes / %s ",254, meses[qui]);
