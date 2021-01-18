@@ -56,33 +56,23 @@ struct Empleados {
     float salarioAfpIss;
 }e[100];
 
+/* Prototipos de funciones de diseño */
 void header(); //Diseño completo (Cabecera y cuadro del cuerpo)
 void ampliar_pantalla(int c); //Solo cabecera
 void gotoxy(int, int );// x - y
 void cuadro(int, int, int, int);//derecha, arriba, izquierda, abajo
 void cls(int, int , int);
+
+/* Prototipo de funcion de Menu */
 int menu();
-int validar_numero(char []);
-int validar_cadena(char []);
+
+/* Prototipo de funciones - Registrar empleados - Josue Aguilar */
 void registroEmpleados(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
 void registroEmpleados_registrar(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
 void registroEmpleados_edit(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
 void registroEmpleados_delete(int &);//dui, e.e[i].nombre, apellidos, cargo, salario, indice
-void registroDescuentos(int);
-int buscarEmpleados(char[50], int, char[25], char[25], int&, int&);
-bool verificarEmpleado(char [50],int, int&);
-void impresionBuscar(int&, int[], int&, int&, int);
-int verificarDoble(int);
-void mostrarEmpleados(char [50], int, int [], int&, int&);
 
-/* Modulo Julio Torres */
-void sistemaPlanilla(int, int);
-void mostrarEmpleadoMensual(int, int, int);
-void mostrarEmpleadoQuincenal(int, int, int);
-void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
-void ampliar_pantallaPlanilla(int, int);
-/* Prototipos Modulo Julio Torres */
-
+/* Protoipos de funciones - Registro de retenciones - Walter Morales */
 void registroRetenciones(int);
 void registroRetenciones_verPorcentajes(int);
 void registroRetenciones_modificar(int);
@@ -90,15 +80,36 @@ void registroRetenciones_historial(int);
 void registroRetenciones_historial_detalles(int, int);
 void calculoRetenciones(int);
 
+/* Prototipos de funciones - Planillas mensuales y quincenales - Julio Torres */
+void sistemaPlanilla(int, int);
+void mostrarEmpleadoMensual(int, int, int);
+void mostrarEmpleadoQuincenal(int, int, int);
+void cuadroPlanillas(int x1, int y1, int x2, int y2);/* inter[], int& y, int& x)  */
+void ampliar_pantallaPlanilla(int, int);
+
+/* Prototipo de funciones - Registro de descuentos - Mario Zelaya */
+void registroDescuentos(int);
+
+/* Prototipo de funciones para buscador */
+int buscarEmpleados(char[50], int, char[25], char[25], int&, int&);
+bool verificarEmpleado(char [50],int, int&);
+void impresionBuscar(int&, int[], int&, int&, int);
+int verificarDoble(int);
+void mostrarEmpleados(char [50], int, int [], int&, int&);
+
+/* Prototipo de funciones de validacion */
+int validar_numero(char []);
+int validar_cadena(char []);
+
 /* DECLARACION DE VARIABLES GLOBALES */
 int conteoModificaciones = 1;
 
 int main(){
+    int op; //Variable que controla las opciones del menu
 
-    int op;
-
+    /* Registro de empleados */
     char dui[row][10] = {{"012345678"},{"087654321"},{"017283782"},{"010293827"},{"029382019"},{"020391827"},{"099281762"},{"028379120"},{"090908990"}};
-    int indice = 3;
+    int indice = 9;
     char nom[row][cols] = {
         {"Josue Adonay"},
         {"Antonio Alejandro"},
@@ -136,10 +147,11 @@ int main(){
     }; 
     
     float salario[row] = {2100,900,1400,1000,1830,800,1200,2001,900}; 
+    
     system("title Sistema de Planillas"); //Titulo de ventana
-    system("mode con: cols=120 lines=30");
+    system("mode con: cols=120 lines=30"); //Tamaño de la ventana
 
-    /*COPIA LAS VARIABLES DECLARADAS CON LOS DATOS A LA ESTRUCTURA*/
+    /*COPIA LAS VARIABLES DECLARADAS CON LOS DATOS DE LOS EMPLEADOS A LA ESTRUCTURA*/
     for (int i = 0; i < indice; i++) {
         strcpy(e[i].dui, dui[i]);
         strcpy(e[i].nom, nom[i]);
@@ -148,7 +160,7 @@ int main(){
         e[i].salario = salario[i];
     }
 
-    /* INICIALIZACION DE ESTADOS EN 0 */
+    /* INICIALIZACION DE LOS ESTADOS DEL HISTORIAL EN 0 */
     for (int i = 1; i < 100; i++) {
         h[i].estado = 0;
     }
@@ -161,6 +173,7 @@ int main(){
         }
     }
 
+    //Bucle para elegir modulo
     do{
         op = menu(); //opcion
 
@@ -168,22 +181,23 @@ int main(){
             case 1: system("cls");registroEmpleados(indice);break; //Modulo 1
             case 2: system("cls");registroRetenciones(indice);break; //Modulo 2
             case 3: system("cls");sistemaPlanilla(indice, 3);break; //Modulo 3
-            case 4: system("cls");sistemaPlanilla(indice, 4);break; //Modulo 3.1
+            case 4: system("cls");sistemaPlanilla(indice, 4);break; //Modulo 4
             case 5: system("cls");registroDescuentos(indice);break; //Modulo 5
-            case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break;
+            case 6: gotoxy(42,22);cout<<ANSI_COLOR_YELLOWLIGTH<<"Mensaje: Hasta luego, vuelva pronto";cuadro(40,21,78,23);cout<<ANSI_COLOR_RESET;Sleep(3000);break; //Mensaje de despedida
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: M"<<"\xA2"<<"dulo incorrecto";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
         }
-    }while(op != 6);
+    }while(op != 6); //Se repite mientras la opcion sea diferente a los modulos existentes
 
     return 0;
 }
 
+/* Funcion de menu */
 int menu(){
-    char opAux[500];
-    int opcion;
-
-    system("cls");
-    header();
+    char opAux[500]; //Variable auxiliar que captura el dato ingresado por el usuario
+    int opcion; //Variable que almacena la validacion de la captura
+ 
+    system("cls"); //Limpia la pantalla
+    header(); //Muestra el diseño de cuadros del sistema
 
 	gotoxy(10,9);cout<<"Elija una opci\xA2n: ";
 
@@ -195,7 +209,7 @@ int menu(){
 	gotoxy(10,16);cout<<"[6] Salir";
 	
 	gotoxy(10,18);cout<<"Selecciona: ";
-    gets(opAux);
+    gets(opAux); //Captura del usuario
 
     if (strlen(opAux) > 6) { //Si la seleccion recibe demasiados valores
         opcion = -1;
@@ -204,16 +218,16 @@ int menu(){
         opcion = validar_numero(opAux); //Validar opcion
     }
 
-    return opcion; 
+    return opcion; //Devuelve la opcion validada
 }
 
-//@xdesprox
+/* Funcion de Registro de Usuarios - Josue Aguilar */
 void registroEmpleados(int& indice){
-    char select[500];
-    int op;
+    char select[500]; //Variable auxiliar que captura el dato ingresado por el usuario
+    int op; //Variable que almacena la validacion de la captura
 
     do{
-        system("mode con: cols=120 lines=30");
+        system("mode con: cols=120 lines=30"); //Define el tamaño de la pantalla
         header();
         gotoxy(10,9); printf("%c Registro de empleados",254);
         gotoxy(10,11); cout<<"[1] Registrar";
@@ -221,28 +235,29 @@ void registroEmpleados(int& indice){
         gotoxy(10,13); cout<<"[3] Eliminar";
         gotoxy(10,14); cout<<"[4] Atras";
         gotoxy(10,16); cout<<"Selecciona: ";
-        gets(select);
+        gets(select); //Captura del usuario
         fflush(stdin);
         
         if (strlen(select) > 4){ //Si la seleccion recibe demasiados valores
             op = -1;
         }else {
-            op = validar_numero(select);
+            op = validar_numero(select); //Validar opcion
         }
 
         //Submenu
         switch(op){
-            case 1: system("cls"); registroEmpleados_registrar(indice); break;
-            case 2: system("cls"); registroEmpleados_edit(indice); break;
-            case 3: system("cls"); registroEmpleados_delete(indice);break;
-            case 4: break;
+            case 1: system("cls"); registroEmpleados_registrar(indice); break; //Registrar
+            case 2: system("cls"); registroEmpleados_edit(indice); break; //Editar
+            case 3: system("cls"); registroEmpleados_delete(indice);break; //Eliminar
+            case 4: break; //Volver
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();//Mensaje modulo no encontrado
         }
 
-    }while(op != 4);
+    }while(op != 4); //El bucle se repite mientras la opcion sea diferente a los modulos mostrados
 
 }
 
+/* Funcion de Registro de Empleados - Registrar */
 void registroEmpleados_registrar(int& indice){
     //Variables
     int cant, dui, centinela;
@@ -250,7 +265,7 @@ void registroEmpleados_registrar(int& indice){
     char *salarioAux;
     string errores, mensaje;
 
-    system("cls");
+    system("cls"); //Limpia la pantalla
 
     //Diseño
     header();
@@ -260,9 +275,8 @@ void registroEmpleados_registrar(int& indice){
     gotoxy(10,9); printf("%c Registro de empleados / Registrar",254); //Header
 
     /* DUI */
-
     do{
-        centinela = 1;
+        centinela = 1; //Variable centinela que controla el bucle
         cant = 1;
 
         cls(strlen(e[indice].dui) + 13, 11, 11); //Borra lineas en pantalla
@@ -408,6 +422,7 @@ void registroEmpleados_registrar(int& indice){
     salir: cout<<""; //La instruccion goto necesita una instruccion delante para que no de error 
 }
 
+/* Funcion de Registro de Empleados - Editar */
 void registroEmpleados_edit(int& indice){
 
     //Variables declaradas
@@ -608,6 +623,7 @@ void registroEmpleados_edit(int& indice){
 
 }
 
+/* Funcion de Registro de Empleados - Eliminar */
 void registroEmpleados_delete(int& indice){
 
     int duiDrop, j, opD, y, p, validar, seleccion;
@@ -741,13 +757,13 @@ void registroEmpleados_delete(int& indice){
     }while(duiDrop != 1);
 }
 
-// @Walter
+/* Funcion de Registro de Retenciones */
 void registroRetenciones(int indice) {
     char select[500];
     int op = 0;
 
     do{
-        system("mode con: cols=120 lines=30");
+        system("mode con: cols=120 lines=30"); //Tamaño de la pantalla
         header();
         gotoxy(10,9);
         printf("%c Registro de retenciones de ley",254);
@@ -761,7 +777,7 @@ void registroRetenciones(int indice) {
         cout<<"[4] Volver";
         gotoxy(10,16);
         cout<<"Selecciona: ";
-        gets(select);
+        gets(select); //Captura del usuario
         fflush(stdin);
         if (strlen(select) > 4) { //Si la seleccion recibe demasiados valores
             op = -1;
@@ -771,21 +787,23 @@ void registroRetenciones(int indice) {
 
         //Submenu
         switch(op){
-            case 1: system("cls"); registroRetenciones_verPorcentajes(indice); break;
-            case 2: system("cls"); registroRetenciones_modificar(indice); break;
-            case 3: system("cls"); registroRetenciones_historial(indice); break;
-            case 4: op = 4; break;
+            case 1: system("cls"); registroRetenciones_verPorcentajes(indice); break; //Ver Porcentajes
+            case 2: system("cls"); registroRetenciones_modificar(indice); break; //Modificar Porcentajes
+            case 3: system("cls"); registroRetenciones_historial(indice); break; //Historial de modificaciones
+            case 4: op = 4; break; //Volver
             default: gotoxy(48,22);cout<<ANSI_COLOR_RED<<"Error: Opci\xA2n incorrecta";cuadro(45,21,75,23);cout<<ANSI_COLOR_RESET;getch();break;//Mensaje modulo no encontrado
         }
     }while(op != 4);
 }
 
+/* Funcion de Registro de Retenciones - Ver Porcentajes */
 void registroRetenciones_verPorcentajes(int indice) {
+    /* Declaracion de variables */
     char recep[200], retupor[200], slcpor[10];
     int op, rpo, spo, valid;
 
-    system("mode con: cols=120 lines=30");
-    header();
+    system("mode con: cols=120 lines=30"); //Tamaño de la pantalla
+    header(); //Diseño de la ventana
 
     gotoxy(10,9);
     printf("%c Ver porcentajes de retencion activos",254);
@@ -794,7 +812,7 @@ void registroRetenciones_verPorcentajes(int indice) {
 
     cuadro(12,12,106,14);
     
-    if(h[0].estado == 1) {
+    if(h[0].estado == 1) { //En caso los porcentajes predeterminado esten activos, se muestra esta ventana
         gotoxy(38,13);
         cout<<ANSI_COLOR_YELLOWLIGTH<<"Porcentajes predeterminados actualmente activos"<<ANSI_COLOR_RESET;
         
@@ -818,6 +836,7 @@ void registroRetenciones_verPorcentajes(int indice) {
         cout<<"Renta IV Tramo";
         cuadro(85,15,106,17);
         
+        /* Impresion de los porcentajes por defecto */
         for (int i = 0; i < conteoModificaciones; i++) {
             if (h[i].estado == 1) {
                 cout<<ANSI_COLOR_GREEN;
@@ -838,26 +857,27 @@ void registroRetenciones_verPorcentajes(int indice) {
         gotoxy(10,23);
         cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver";
         getch();
-    }else {
+    }else { //En caso esten activos otros porcentajes, no por los defectos, muestra esta ventana
         do {
-            ampliar_pantalla(9);
+            ampliar_pantalla(9); //Amplia la pantalla
 
             gotoxy(10,9);
             printf("%c Ver porcentajes de retencion activos",254);
 
             gotoxy(49,13);
             
-            cuadro(10,11,59,21);
+            cuadro(10,11,59,21); //Cuadro de diseño exterior
             
-            cuadro(16,12,53,14);
+            cuadro(16,12,53,14); //Cuadro de diseño interior
 
             gotoxy(19,13);
             cout<<ANSI_COLOR_GREEN<<"Porcentajes actualmente activos"<<ANSI_COLOR_RESET;
 
+            /* Impresion de los porcentajes actualmente activos */
             for (int i = 0; i < conteoModificaciones; i++) {
                 if(h[i].estado == 1) {
                     for (int j = 15; j < 20; j++) {
-                        cls(8,37,j);
+                        cls(8,37,j); //Limpia lineas de la pantalla
                     } 
                     gotoxy(16,15);
                     cout<<"AFP";gotoxy(37,15);cout<<ANSI_COLOR_GREEN<<h[i].p[i].porAfp<<" %"<<ANSI_COLOR_RESET;
@@ -872,9 +892,11 @@ void registroRetenciones_verPorcentajes(int indice) {
                 }
             }
 
-            cuadro(60,11,108,21);
+            cuadro(60,11,108,21); //Cuadro de diseño exterior
 
-            cuadro(66,12,102,14);
+            cuadro(66,12,102,14); //Cuadro de diseño interior
+            
+            /* Impresion de porcentajes predeterminados */
             gotoxy(71,13);
             cout<<ANSI_COLOR_YELLOWLIGTH<<"Porcentajes predeterminados"<<ANSI_COLOR_RESET;
             
@@ -903,6 +925,7 @@ void registroRetenciones_verPorcentajes(int indice) {
 
             switch(op) {
                 case 1: 
+                    /* Ventana de confirmacion */
                     do{
                         system("mode con: cols=120 lines=30"); //cols -> Ancho || lines -> Alto
                         header();
@@ -988,6 +1011,7 @@ void registroRetenciones_verPorcentajes(int indice) {
     }
 }
 
+/* Funcion de Registro de retenciones - Modificar porcentajes */
 void registroRetenciones_modificar(int indice){
     char recepAfp[50], recepIsss[3], recepRenta1[3], recepRenta2[3], recepRenta3[3];
     float afp, isss, renta1, renta2, renta3;
@@ -1248,6 +1272,7 @@ void registroRetenciones_modificar(int indice){
     getch();
 }
 
+/* Funcion de Registro de Retenciones - Historial de modificaciones */
 void registroRetenciones_historial(int indice) {
     int seleccion, bSeleccion;
     int auxSeleccion = '\0';
@@ -1388,6 +1413,7 @@ void registroRetenciones_historial(int indice) {
     }while (seleccion != auxSeleccion);
 }
 
+/* Funcion de Registro de Retenciones - Historial de modificaciones - Ventana de detalles */
 void registroRetenciones_historial_detalles(int seleccion, int indice) {
     char recep[500], recepM[500];
     int op, validar, opM;
@@ -1545,6 +1571,7 @@ void registroRetenciones_historial_detalles(int seleccion, int indice) {
     } while(op != 2);    
 }
 
+/* Funcion de calculo de retenciones */
 void calculoRetenciones(int indice) {
     /* Calculo de las retenciones de ley */
     for (int j = 0; j < conteoModificaciones; j++) {
@@ -1575,7 +1602,7 @@ void calculoRetenciones(int indice) {
     }
 }
 
-//@Julio-Sama
+/* Funcion de Planilla */
 void sistemaPlanilla(int indice, int op){ // Modulo 3 Sub-Menu: Encargado Julio Torres
     /* Declaracion de variables, vectores y arreglos */
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -1625,6 +1652,7 @@ void sistemaPlanilla(int indice, int op){ // Modulo 3 Sub-Menu: Encargado Julio 
         } while (mesSeleccion != 0);
 }
 
+/* Funcion de planilla - Ventana de Planilla mensual */
 void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de la lista de empleados en la planilla: Julio Torres
     // Declaracion de arreglo y variable
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -1736,6 +1764,7 @@ void mostrarEmpleadoMensual(int seleccion, int indice, int op){ // Impresion de 
     getch();
 }
 
+/* Funcion de planilla - Ventana de Planilla Quincenal */
 void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la lista de empleados en la planilla: Julio Torres
 /* Declaracion de arreglo y variable */
     char meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -1825,7 +1854,7 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
     getch();
 }
 
-//@zelaya201
+/* Funcion de Registro de Descuentos */
 void registroDescuentos(int indice) {
     int seleccion, DS, y, p, diasD, idMes, centinela; 
     char recep[50], diasDC[2], mesSelec[15] = "\0";
@@ -2011,7 +2040,7 @@ void registroDescuentos(int indice) {
     }while (DS != 1);   
 }
 
-
+/* Funcion de Buscador */
 int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], int& p, int& y) {
     int seleccion;
     int auxSeleccion = '\0';
@@ -2139,6 +2168,7 @@ int buscarEmpleados(char recep[50], int indice, char str1[25], char str2[25], in
     return seleccion; //Devuelve la seleccion
 }
 
+/* Funcion de verificar empleados */
 bool verificarEmpleado(char recep[50], int indice, int& c) {
     bool exist = false;
     char auxNom[50] = "\0", auxApe[50] = "\0", auxCargo[50] = "\0";
@@ -2192,6 +2222,7 @@ bool verificarEmpleado(char recep[50], int indice, int& c) {
     return exist; //Retorna un booleano, dependiendo si existe o no el empleado
 }
 
+/* Funcion para mostrar los empleados encontrados en el buscador */
 void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x) {
     int a, c, pos[indice], doble, j = 0, k;
     char auxNom[50] = "\0", auxApe[50] = "\0", auxCargo[50] = "\0";
@@ -2262,6 +2293,7 @@ void mostrarEmpleados(char recep[50], int indice, int pointer[], int& y, int& x)
     } */
 }
 
+/* Funcion para la impresion de los empleados encontrados */
 void impresionBuscar(int& y, int pointer[], int& a, int& c, int i) {
     y++;
 
@@ -2286,6 +2318,7 @@ void impresionBuscar(int& y, int pointer[], int& a, int& c, int i) {
     cout<<"$"<<fixed<<setprecision(2)<<e[i].salario;
 }
 
+/* Funcion para verificar si existe un doble apellido */
 int verificarDoble(int i) {
     char auxApe[50] = "\0";
     char apeP[2][15];
@@ -2367,6 +2400,7 @@ void ampliar_pantalla(int c){
     gotoxy(23,3); cout<<"P A N E L  D E  C O N T R O L  |  S I S T E M A  D E  P L A N I L L A S";
 }
 
+/* Funcion para ampliar la pantalla de la ventana de planillas */
 void ampliar_pantallaPlanilla(int c, int opc){
     if (opc == 3){
         char mode[40] = "mode con: cols=169 lines=";
@@ -2448,6 +2482,7 @@ int validar_cadena(char palabra[row]){
     return contador;
 }
 
+/* Funcion para eliminar ciertas lineas de la pantalla */
 void cls(int longitud, int posicionX, int posicionY){
     for(int i = 0; i < longitud; i++){
         gotoxy(posicionX + i, posicionY);
