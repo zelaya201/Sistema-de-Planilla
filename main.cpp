@@ -2406,13 +2406,24 @@ int validar_numero(char numero[2]){
 //Validar una cadena de caracteres
 int validar_cadena(char palabra[row]){
     int contador = 0;
+    int count;
+    int c[12] = {-92,-91,-96,-75,-126,-112,-95,-42,-94,-32,-93,-23};
 
     for(int i = 0; i < strlen(palabra); i++){
+        count = 0;
+
         if(isalpha(palabra[i]) == 0 && isspace(palabra[i]) == 0){
-            contador++;
+            for(int j = 0; j < 12; j++){
+                if((int)palabra[i] == c[j]){
+                    count++;
+                } 
+            }
+
+            if(count == 0){
+                contador++;
+            }       
         }
     }
-
     return contador;
 }
 
