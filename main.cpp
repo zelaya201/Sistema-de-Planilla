@@ -969,7 +969,7 @@ void registroDescuentos(int indice) {
     int seleccion, DS, y, p, diasD, idMes, centinela; 
     char recep[50], diasDC[2], mesSelec[15] = "\0";
     char str1[25] = "descuentos", str2[25] = "Buscar empleado", meses[12][15] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-    int diasMeses[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int diasMeses[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     float salarioDia, descuentoRealizado;
     string errores, mensaje;
 
@@ -1082,7 +1082,15 @@ void registroDescuentos(int indice) {
                 }
 
             }while(centinela != 1);
-            //strcpy(e[seleccion].mesEmpleado, mesSelec);
+
+            if (e[seleccion].descuento[idMes] != 0) {
+                gotoxy(20,25);
+                cout<<ANSI_COLOR_YELLOWLIGTH<<"Ya se ha aplicado un descuento a este mes, si realiza otro, este sustituira al anterior"<<ANSI_COLOR_RESET;
+                gotoxy(13,20);
+                cout<<ANSI_COLOR_YELLOWLIGTH<<"Descuento realizado: $"<<e[seleccion].descuento[idMes]<<ANSI_COLOR_RESET;
+                getch();
+                cls(87, 20, 25);
+            }
 
             /* Dias a descontar */
             do{
@@ -1128,13 +1136,14 @@ void registroDescuentos(int indice) {
 
             e[seleccion].descuento[idMes] = diasD * salarioDia; //Se realiza el descuento dependiendo los dias y el salario diario
 
+            cls(28, 13, 20);
             gotoxy(13,20);
             cout<<fixed<<setprecision(2)<<ANSI_COLOR_GREEN<<"Descuento realizado: $"<<(float)e[seleccion].descuento[idMes]<<ANSI_COLOR_RESET;         
             gotoxy(20,25);
             mensaje = "Descuentos realizados correctamente.";
             cout<<ANSI_COLOR_GREEN<<mensaje<<ANSI_COLOR_RESET;
                // e[seleccion].pl.Adescontar = e[seleccion].descuento[idMes]; // Julio Torres
-
+            
             getch();
             salir:
             cout<<"";
