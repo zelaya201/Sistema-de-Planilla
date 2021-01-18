@@ -421,7 +421,7 @@ void mostrarEmpleadoQuincenal(int qui, int indice, int op){ // Impresion de la l
         
         calculoRetenciones(indice);
         gotoxy(106,y); // Salario Neto Mensual
-        //e[i].salarioN[qui] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[qui]);
+        e[i].salarioN[qui] = e[i].salario - (e[i].afp + e[i].isss + e[i].renta + e[i].descuento[qui]);
         if (e[i].salarioN[qui] <= 0){
             cout<<ANSI_COLOR_RED<<"$00.00"<<ANSI_COLOR_RESET;
         }else{
