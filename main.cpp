@@ -1314,7 +1314,7 @@ void registroRetenciones_historial(int indice) {
     do {
         y = 13;
 
-        if (conteoModificaciones >= 7) {
+        if (conteoModificaciones >= 5) {
             ampliar_pantalla(conteoModificaciones+4);
         }else {
             system("mode con: cols=120 lines=30");
