@@ -1728,6 +1728,7 @@ void registroRetenciones_historial(int indice) {
             gotoxy(10,y+4);
             cout<<ANSI_COLOR_YELLOWLIGTH<<"Nota: "<<ANSI_COLOR_RESET<<"Presione [Enter] si desea volver";
             getch();
+            seleccion = 0;
         }else {
             for (int i = 1; i < conteoModificaciones; i++) {
                 y++;
@@ -1753,6 +1754,7 @@ void registroRetenciones_historial(int indice) {
                 gotoxy(10,y+6);
                 cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" No puedes elegir una modificacion activa. Presione [Enter] si desea volver"<<ANSI_COLOR_RESET;
                 getch();
+                seleccion = 0;
             }else {
                 gotoxy(10,y+6);
                 cout<<"Nota:"<<ANSI_COLOR_YELLOWLIGTH<<" No puedes elegir una modificacion activa."<<ANSI_COLOR_RESET;
